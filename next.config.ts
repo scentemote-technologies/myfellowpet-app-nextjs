@@ -1,7 +1,14 @@
-import type { NextConfig } from "next";
+/** @type {import('next').NextConfig} */
+const nextConfig = {
+  output: "export", // 🔥 REQUIRED for static hosting (cPanel, GoDaddy)
+  reactStrictMode: false,
+  devIndicators: {
+    buildActivity: false,
+  },
 
-const nextConfig: NextConfig = {
-  /* config options here */
+  images: {
+    unoptimized: true, // 🔥 Important: avoids Next Image optimization server
+  },
 };
 
-export default nextConfig;
+module.exports = nextConfig;

@@ -1,65 +1,293 @@
-import Image from "next/image";
+'use client';
 
-export default function Home() {
+import React from 'react';
+import Footer from "@/app/components/Footer";
+import Image from 'next/image';
+import Link from 'next/link';
+import { Poppins } from 'next/font/google'; // Import Google Font
+import { FaWhatsapp, FaUserCircle, FaSearch } from 'react-icons/fa';
+import useBoardingServices from '@/lib/useBoardingServices'; 
+import ServiceCard from './components/ServiceCard'; // Assuming ServiceCard is in app/components
+// Add these imports to your existing icon imports at the top
+import { FaInstagram, FaAngleDown, FaAngleUp, FaEnvelope } from 'react-icons/fa';
+import { 
+  MdHome, 
+  MdContentCut, 
+  MdLocalHospital, 
+  MdShoppingBag, 
+  MdSchool, 
+  MdFavorite 
+} from 'react-icons/md';
+
+// --- FONT CONFIGURATION ---
+const poppins = Poppins({ 
+  subsets: ['latin'], 
+  weight: ['400', '500', '600', '700', '800'] 
+});
+
+// --- CONSTANTS & STYLES ---
+const kPrimary = "#2CB4B6"; // Teal color
+const kAccent = "#F67B0D";  // Orange accent
+
+// Final link URLs
+const PLAY_STORE_URL = "https://play.google.com/store/apps/details?id=com.myfellowpet.app";
+const APP_STORE_URL = "YOUR_APP_STORE_LINK"; // REPLACE THIS WITH YOUR APPLE LINK
+
+// Static Data for Services
+const services = [
+  { name: 'Boarding', icon: MdHome, link: '/services/boarding' },
+  { name: 'Grooming', icon: MdContentCut, link: '/services/grooming' },
+  { name: 'Vets', icon: MdLocalHospital, link: '/services/vet' },
+  { name: 'Supplies', icon: MdShoppingBag, link: '/store' },
+  { name: 'Training', icon: MdSchool, link: '/services/training' },
+  { name: 'Farewell', icon: MdFavorite, link: '/services/farewell' },
+];
+
+export default function LandingPage() {
+   
+    // --- DYNAMIC DATA AND STATE MANAGEMENT ---
+    const { cards: sortedCards, loading } = useBoardingServices();
+    const [showAllBoardingCards, setShowAllBoardingCards] = React.useState(false);
+    
+    // Dynamic Display Logic
+    const hasMoreThanFive = sortedCards.length > 5;
+    const cardsToDisplay = hasMoreThanFive && !showAllBoardingCards
+        ? sortedCards.slice(0, 6) // Show first 5 cards if not showing all
+        : sortedCards; // Show all cards
+
   return (
-    <div className="flex min-h-screen items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex min-h-screen w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the page.tsx file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
-          </p>
+    <div className={`min-h-screen bg-white text-gray-800 relative ${poppins.className}`}>
+      
+      {/* ================= HEADER (Minimal Padding) ================= */}
+      <header className="flex items-center justify-between px-6 py-4 bg-white shadow-sm sticky top-0 z-50">
+        
+        {/* Left: Logo */}
+        <div className="flex items-center gap-2">
+             <Image 
+                src="/assets/myfellowpet_web_logo.jpg" 
+                alt="MyFellowPet" 
+                width={160} 
+                height={50}
+                className="cursor-pointer"
+             /> 
         </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
+
+       <div className="hidden md:flex gap-3 items-center">
+
+  {/* Partner Button */}
+  <Link href="https://partner.myfellowpet.com/" target="_blank" rel="noopener noreferrer">
+    <button 
+      className="h-10 px-5 flex items-center rounded-full font-semibold text-white transition-transform hover:scale-105 shadow-md"
+      style={{ backgroundColor: kPrimary }}
+    >
+      Partner with us
+    </button>
+  </Link>
+
+  {/* App Store Badge */}
+  <Link href={APP_STORE_URL} target="_blank" className="h-10 flex items-center">
+    <Image 
+      src="/assets/AppStoreLogo.png"
+      alt="App Store"
+      width={110}
+      height={32}
+    />
+  </Link>
+
+  {/* Google Play Badge */}
+  <Link href={PLAY_STORE_URL} target="_blank" className="h-10 flex items-center">
+    <Image 
+      src="/assets/GooglePlayLogo.png"
+      alt="Google Play"
+      width={125}
+      height={29}
+    />
+  </Link>
+
+  {/* Profile Icon */}
+  <button className="h-10 flex items-center text-gray-500 hover:text-gray-800 transition">
+    <FaUserCircle size={28} />
+  </button>
+
+</div>
+
+      </header>
+
+
+      {/* ================= HERO SECTION (MAX EDGE) ================= */}
+      {/* CRITICAL CHANGE: Removed max-w-* and mx-auto. Content now spans full width. */}
+      <div className="px-0"> 
+        <main className="w-full py-0 flex flex-col-reverse md:flex-row items-center gap-24">
+          
+          {/* Left: Text Content - Uses minimal internal padding to push text away from the absolute edge on small screens */}
+          <div className="flex-1 text-center md:text-left space-y-6 px-4">
+            <div className="flex-1 text-center md:text-left space-y-6 pl-12">
+             <h1 className="text-3xl md:text-[2.6rem] font-semibold leading-snug text-gray-900">
+  All Pet Services. <br />
+  One App. <span style={{ color: kPrimary }}>Across India.</span>
+</h1>
+
+              
+          <p className="text-gray-700 text-base md:text-lg max-w-full mx-auto md:mx-0 leading-relaxed">
+  India’s No.1 Pet Service Aggregator — trusted by thousands of pet parents. 
+  From grooming to boarding, food to healthcare, everything your pet needs is here.
+</p>
+
+
+              {/* Search Bar */}
+              <div className="mt-8 relative max-w-lg mx-auto md:mx-0 shadow-lg rounded-full flex items-center bg-white border border-gray-100 p-2">
+                  <FaSearch className="ml-4 text-gray-400" size={20} />
+                  <input 
+                      type="text" 
+                      placeholder="Search for services..." 
+                      className="flex-1 px-4 py-3 outline-none text-gray-700 bg-transparent"
+                  />
+                  <button 
+                      className="px-8 py-3 rounded-full text-white font-bold transition hover:opacity-90"
+                      style={{ backgroundColor: kAccent }}
+                  >
+                      Find Care
+                  </button>
+              </div>
+          </div>
+          </div>
+
+          {/* Right: Hero Image - No padding */}
+          <div className="flex-1 flex justify-center">
+              <div className="relative w-[380px] h-[380px] md:w-[480px] md:h-[480px]">
+                  <Image 
+                      src="/assets/ProductionLogo.jpg" 
+                      alt="Pet Map Location"
+                      layout="fill"
+                      objectFit="contain"
+                      priority
+                  />
+              </div>
+          </div>
+        </main>
+      </div>
+
+
+      {/* ================= SERVICES GRID (MAX EDGE) ================= */}
+      <section className="bg-white py-0">
+        {/* CRITICAL CHANGE: Removed max-w-* and mx-auto. Now uses w-full px-2 for minimal gutter */}
+        <div className="w-full px-2"> 
+            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 gap-6">
+                {services.map((service, index) => (
+                    <Link href={service.link} key={index} className="group">
+                        <div className="bg-white rounded-xl shadow-sm p-4 flex flex-col items-center justify-center gap-3 transition-all duration-300 hover:shadow-md hover:-translate-y-1 cursor-pointer border border-gray-100 group-hover:border-teal-100">
+                            <service.icon 
+                                size={32} 
+                                style={{ color: kPrimary }} 
+                                className="mb-1"
+                            />
+                            <span className="font-semibold text-base text-gray-700 group-hover:text-teal-600 text-center">
+                                {service.name}
+                            </span>
+                        </div>
+                    </Link>
+                ))}
+            </div>
         </div>
-      </main>
+      </section>
+       <hr className="my-10 mx-auto w-11/12 border-gray-200" />
+        
+        {/* ================= DYNAMIC BOARDING CARDS SECTION ================= */}
+        <section className="py-10 px-4 md:px-12 w-full">
+            <div className="max-w-7xl mx-auto">
+                
+                {/* Heading */}
+                <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-2">
+                    Search nearby <span style={{ color: kPrimary }}>boarding centers</span> today!
+                </h2>
+                <p className="text-lg text-gray-600 mb-8">
+                    Trusted care for your pets. Convenient, safe, and affordable.
+                </p>
+
+                {/* --- Loading State --- */}
+                {loading && (
+                    <div className="text-center py-20">
+                        <div className="w-12 h-12 border-4 border-t-4 border-gray-200 border-t-teal-500 rounded-full animate-spin mx-auto"></div>
+                        <p className="mt-4 text-gray-600">Fetching nearby services...</p>
+                    </div>
+                )}
+                
+                {/* --- Empty State --- */}
+                {!loading && sortedCards.length === 0 && (
+                    <div className="text-center py-20 text-gray-600">
+                        No boarding services found near your location.
+                    </div>
+                )}
+
+                {/* --- Cards Grid --- */}
+                {!loading && sortedCards.length > 0 && (
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 justify-items-center md:justify-items-stretch">
+                        
+                        {cardsToDisplay.map((service, index) => {
+                            // Show More button logic (at the 6th position)
+                            if (index === 5 && hasMoreThanFive && !showAllBoardingCards) {
+                                return (
+                                    <div key="show-more-placeholder" className="w-full flex justify-center items-center">
+                                        <button
+                                            onClick={() => setShowAllBoardingCards(true)}
+                                            className="w-full max-w-xs md:max-w-none h-40 border-2 border-dashed rounded-xl flex flex-col items-center justify-center transition-all duration-300 text-lg font-semibold"
+                                            style={{ borderColor: kPrimary, color: kPrimary }}
+                                        >
+                                            <FaAngleDown size={24} className="mb-2" />
+                                            Show {sortedCards.length - 5} More Boarding Centers
+                                        </button>
+                                    </div>
+                                );
+                            }
+                            
+                            return (
+                                <ServiceCard 
+                                    key={service.service_id} 
+                                    service={service} 
+                                />
+                            );
+                        })}
+                    </div>
+                )}
+                
+                {/* Show Less Button */}
+                {showAllBoardingCards && hasMoreThanFive && (
+                    <div className="w-full text-center mt-8">
+                        <button
+                            onClick={() => setShowAllBoardingCards(false)}
+                            className="px-6 py-2 rounded-full font-semibold border transition-all duration-300 hover:opacity-90 flex items-center gap-2 mx-auto"
+                            style={{ borderColor: kPrimary, color: kPrimary }}
+                        >
+                            <FaAngleUp size={20} />
+                            Show Less
+                        </button>
+                    </div>
+                )}
+            </div>
+        </section>
+
+      
+      <div className="mt-20"> 
+  <Footer />
+</div>
+
+
+      
+
+      {/* ================= WHATSAPP FLOATING BUTTON ================= */}
+      <a
+        href="https://wa.me/919876543210" 
+        target="_blank"
+        rel="noopener noreferrer"
+        className="fixed bottom-6 right-6 z-50 transition-transform hover:scale-110"
+        aria-label="Chat on WhatsApp"
+      >
+        <div className="bg-green-500 text-white p-3 rounded-full shadow-xl flex items-center justify-center w-14 h-14">
+            <FaWhatsapp size={30} />
+        </div>
+      </a>
+
     </div>
   );
 }
+

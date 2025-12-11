@@ -1,0 +1,86 @@
+/* styles/Home.module.css */
+
+/* --- Global Utilities/Resets --- */
+.safeAreaPadding {
+    /* Mimics Flutter's SafeArea padding, ensuring content clears fixed headers/footers */
+    padding-top: 4rem; /* Should match the height of your fixed Header component */
+    min-height: 100vh;
+}
+
+/* --- Content Wrapper --- */
+.mainWrapper {
+    max-width: 1280px; /* Max width to contain the content grid */
+    margin-left: auto;
+    margin-right: auto;
+    padding: 0 1rem; /* Horizontal padding for smaller screens */
+}
+
+/* --- Divider Style (Replaces Flutter's Divider widget) --- */
+.divider {
+    border: none;
+    height: 1.2px;
+    background-color: #e0e0e0; /* soft color */
+    margin: 32px 0; /* height: 32 in Flutter */
+}
+
+/* --- Service Card Grid Layout (Replaces Flutter's Row/FittedBox/LayoutBuilder logic) --- */
+
+.serviceGrid {
+    /* Default: Single column layout for small screens */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 16px; /* spacing */
+}
+
+/* Tablet/Small Desktop View (approx 800px breakpoint in your Flutter code) */
+@media (min-width: 800px) {
+    .serviceGrid {
+        /* Switch to a responsive grid */
+        display: grid;
+        /* Use CSS grid to allow items to auto-fit, ensuring 380px card width */
+        grid-template-columns: repeat(auto-fit, minmax(380px, 1fr));
+        gap: 24px;
+        align-items: stretch; /* Ensure cards fill height */
+        justify-content: center;
+        width: 100%;
+        max-width: 1280px; /* Ensure it stays within max wrapper */
+        margin-left: auto;
+        margin-right: auto;
+    }
+}
+
+/* --- Promotion Card Background (Specific gradient styling) --- */
+.promotionCard {
+    /* Matches the dark/premium gradient from MfpPromotionCard */
+    background: linear-gradient(135deg, #2D3436, #1E272E);
+    border-radius: 24px;
+    box-shadow: 0 10px 20px rgba(44, 180, 182, 0.15), 0 0 10px rgba(0, 0, 0, 0.05); /* Soft teal shadow */
+    color: white;
+}
+
+/* --- Clients Section Styling (To mimic the repeating carousel/scrolling effect) --- */
+/* Note: The animation logic for scrolling carousel must be handled in the JS component (ClientsSection.jsx - which we are skipping for now, but will place logic in index.js) */
+.clientsSection {
+    background-color: white;
+    padding: 60px 0;
+    overflow: hidden; /* Important for containing the scrolling list */
+}
+
+/* --- WhatsApp FAB Styling --- */
+.whatsappFab {
+    position: fixed;
+    bottom: 24px;
+    right: 24px;
+    background-color: #25D366; /* Official WhatsApp Green */
+    color: white;
+    border-radius: 50%;
+    padding: 16px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+    transition: transform 0.3s ease;
+    z-index: 40;
+}
+
+.whatsappFab:hover {
+    transform: scale(1.1);
+}
