@@ -28,8 +28,8 @@ export async function generateMetadata(
     };
   }
 
-  const title = `${service.shopName} | ${service.pets?.[0] || "Pet"} ${serviceType} in ${area}, ${district}`;
-  const description = `Book ${service.pets?.[0] || "pet"} ${serviceType} at ${service.shopName} in ${area}, ${district}. Starts from ₹${service.min_price || "N/A"}. Trusted and verified service provider.`;
+  const title = `${service.shop_name} | ${service.pets?.[0] || "Pet"} ${serviceType} in ${area}, ${district}`;
+  const description = `Book ${service.pets?.[0] || "pet"} ${serviceType} at ${service.shop_name} in ${area}, ${district}. Starts from ₹${service.min_price || "N/A"}. Trusted and verified service provider.`;
 
   return {
     title,
