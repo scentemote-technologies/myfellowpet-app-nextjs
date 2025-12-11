@@ -1,6 +1,6 @@
 "use server";
-import "server-only";
-import { adminDB } from "./firebaseAdmin";
+
+import { adminDB } from "@/server/firebaseAdmin";
 import { buildShopSlug } from "./slug";
 
 export interface ServiceDoc {
@@ -20,7 +20,6 @@ export interface ServiceDoc {
 
 export async function getServiceBySlug(slug: string): Promise<ServiceDoc | null> {
   try {
-    // 1️⃣ Try direct lookup by seo_slug
     const snap = await adminDB
       .collection("users-sp-boarding")
       .where("seo_slug", "==", slug)
@@ -32,9 +31,6 @@ export async function getServiceBySlug(slug: string): Promise<ServiceDoc | null>
       return { service_id: doc.id, ...(doc.data() as any) };
     }
 
-    console.warn("Fallback slug search triggered");
-
-    // 2️⃣ Fallback: brute force match
     const allDocs = await adminDB.collection("users-sp-boarding").get();
 
     for (const doc of allDocs.docs) {
