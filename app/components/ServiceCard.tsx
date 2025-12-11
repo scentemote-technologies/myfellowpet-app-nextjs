@@ -73,22 +73,26 @@ const ServiceCard: React.FC<ServiceCardProps> = ({ service }) => {
     const { avg, count, loading } = useRatingStats(service_id);
     const roundedAvg = Math.round(avg);
     
-    // Mock SEO Path - replace with your actual Next.js path logic
-// SEO Dynamic Path
-const country = "india"; // later you can make this dynamic
-const serviceType = "boarding"; // also can be dynamic
+const country = "india";
+const serviceType = "boarding";
 
-const stateSlug = (service.state || "unknown").toLowerCase().replace(/\s+/g, "-");
-const districtSlug = (service.district || "unknown").toLowerCase().replace(/\s+/g, "-");
-const areaSlug = (areaName || "unknown").toLowerCase().replace(/\s+/g, "-");
+const stateSlug = (service.state || "unknown")
+  .toLowerCase()
+  .replace(/\s+/g, "-");
 
-// pet for slug generation
-const pet = pets[0] || "pet";
+const districtSlug = (service.district || "unknown")
+  .toLowerCase()
+  .replace(/\s+/g, "-");
 
-// final slug: "paws-and-claws-dog-center"
-const seoSlug = buildShopSlug(shopName, pet);
+const areaSlug = (service.area_name || "unknown")
+  .toLowerCase()
+  .replace(/\s+/g, "-");
+
+// Use Firestore SEO slug (NEVER generate it again)
+const seoSlug = service.seo_slug || "unknown";
 
 const seoPath = `/${country}/${serviceType}/${stateSlug}/${districtSlug}/${areaSlug}/${seoSlug}`;
+
     const runStyle = getRunTypeStyle(runType);
     
     return (
