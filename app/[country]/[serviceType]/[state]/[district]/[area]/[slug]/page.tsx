@@ -1,19 +1,20 @@
 import { getServiceBySlug } from "@/lib/getServiceBySlug";
 import Image from "next/image";
+import type { Metadata } from "next";
 
 export const dynamic = "force-dynamic";
 
-import type { Metadata } from "next";
-
 export async function generateMetadata(
-  { params }: { params: {
+  { params }: {
+    params: {
       country: string;
       serviceType: string;
       state: string;
       district: string;
       area: string;
       slug: string;
-  }}
+    };
+  }
 ): Promise<Metadata> {
 
   const { slug, country, serviceType, state, district, area } = params;
@@ -57,8 +58,19 @@ export async function generateMetadata(
   };
 }
 
+export default async function ServicePage({
+  params,
+}: {
+  params: {
+    country: string;
+    serviceType: string;
+    state: string;
+    district: string;
+    area: string;
+    slug: string;
+  };
+}) {
 
-export default async function ServicePage({ params }) {
   const { slug, country, serviceType, state, district, area } = params;
 
   const service = await getServiceBySlug(slug);
