@@ -95,6 +95,10 @@ export default async function ServicePage(
   const pets = service.pets || [];
   const price = service.min_price || "—";
 
+  const stateSlug = service.state?.toLowerCase().replace(/\s+/g, "-");
+  const districtSlug = service.district_slug;
+  const areaSlug = service.area_name?.toLowerCase().replace(/\s+/g, "-");
+
   return (
     <>
       {/* ========================================================= */}
@@ -110,11 +114,7 @@ export default async function ServicePage(
             name: service.shop_name,
             description: service.description,
             image: service.shop_logo || service.image_urls?.[0],
-            url: `https://myfellowpet.com/india/boarding/${service.state
-              ?.toLowerCase()
-              .replace(/\s+/g, "-")}/${service.district_slug}/${service.area_name
-              ?.toLowerCase()
-              .replace(/\s+/g, "-")}/${service.seo_slug}`,
+            url: `https://myfellowpet.com/india/boarding/${stateSlug}/${districtSlug}/${areaSlug}/${service.seo_slug}`,
             telephone: service.owner_phone,
             priceRange: "₹₹",
             address: {
@@ -142,7 +142,7 @@ export default async function ServicePage(
       />
 
       {/* ========================================================= */}
-      {/* ✅ STEP 2 — FAQ Schema (NEW) */}
+      {/* ✅ STEP 2 — FAQ Schema (UNCHANGED) */}
       {/* ========================================================= */}
       <script
         type="application/ld+json"
@@ -182,6 +182,57 @@ export default async function ServicePage(
                   "@type": "Answer",
                   text: `${service.shop_name} is located at ${service.full_address}.`,
                 },
+              },
+            ],
+          }),
+        }}
+      />
+
+      {/* ========================================================= */}
+      {/* ✅ STEP 3 — Breadcrumb Schema (GOOGLE ONLY) */}
+      {/* ========================================================= */}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "BreadcrumbList",
+            itemListElement: [
+              {
+                "@type": "ListItem",
+                position: 1,
+                name: "Home",
+                item: "https://myfellowpet.com",
+              },
+              {
+                "@type": "ListItem",
+                position: 2,
+                name: "Pet Boarding",
+                item: "https://myfellowpet.com/india/boarding",
+              },
+              {
+                "@type": "ListItem",
+                position: 3,
+                name: service.state,
+                item: `https://myfellowpet.com/india/boarding/${stateSlug}`,
+              },
+              {
+                "@type": "ListItem",
+                position: 4,
+                name: service.district,
+                item: `https://myfellowpet.com/india/boarding/${stateSlug}/${districtSlug}`,
+              },
+              {
+                "@type": "ListItem",
+                position: 5,
+                name: service.area_name,
+                item: `https://myfellowpet.com/india/boarding/${stateSlug}/${districtSlug}/${areaSlug}`,
+              },
+              {
+                "@type": "ListItem",
+                position: 6,
+                name: service.shop_name,
+                item: `https://myfellowpet.com/india/boarding/${stateSlug}/${districtSlug}/${areaSlug}/${service.seo_slug}`,
               },
             ],
           }),
