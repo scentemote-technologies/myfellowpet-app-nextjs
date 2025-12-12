@@ -240,6 +240,34 @@ export default async function ServicePage(
       />
 
       {/* ========================================================= */}
+{/* ✅ STEP 4 — AggregateRating Schema (STARS) */}
+{/* ========================================================= */}
+{service.avg_rating > 0 && service.rating_count > 0 && (
+  <script
+    type="application/ld+json"
+    dangerouslySetInnerHTML={{
+      __html: JSON.stringify({
+        "@context": "https://schema.org",
+        "@type": "AggregateRating",
+        itemReviewed: {
+          "@type": "LocalBusiness",
+          name: service.shop_name,
+          url: `https://myfellowpet.com/india/boarding/${service.state
+            ?.toLowerCase()
+            .replace(/\s+/g, "-")}/${service.district_slug}/${service.area_name
+            ?.toLowerCase()
+            .replace(/\s+/g, "-")}/${service.seo_slug}`,
+        },
+        ratingValue: service.avg_rating,
+        reviewCount: service.rating_count,
+        bestRating: "5",
+        worstRating: "1",
+      }),
+    }}
+  />
+)}
+
+      {/* ========================================================= */}
       {/* PAGE UI */}
       {/* ========================================================= */}
       <main className="min-h-screen max-w-4xl mx-auto p-6">
