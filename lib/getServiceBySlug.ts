@@ -5,7 +5,13 @@ import { buildShopSlug } from "./slug";
 
 export async function getServiceBySlug(slug: string) {
   const adminDB = await getAdminDB();
-  slug = slug.toLowerCase(); // IMPORTANT
+  if (!slug) {
+  console.error("❌ ERROR: getServiceBySlug received empty slug");
+  return null;
+}
+
+slug = slug.toLowerCase();
+
 
   // 1️⃣ Try direct Firestore seo_slug match
   const snap = await adminDB
@@ -13,6 +19,8 @@ export async function getServiceBySlug(slug: string) {
     .where("seo_slug", "==", slug)
     .limit(1)
     .get();
+
+  console.log("🔥 DEBUG: Direct match docs =", snap.docs.length);  
 
   if (!snap.empty) {
     const doc = snap.docs[0];

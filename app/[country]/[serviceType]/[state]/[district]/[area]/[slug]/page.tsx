@@ -4,7 +4,6 @@ import type { Metadata } from "next";
 
 export const dynamic = "force-dynamic";
 
-// URL params type
 type ServicePageParams = {
   country: string;
   serviceType: string;
@@ -22,10 +21,21 @@ export async function generateMetadata(
   { params }: { params: ServicePageParams }
 ): Promise<Metadata> {
 
-  // 🔥 FIX #1 — Handle Vercel's weird param name
-  const slug = params.slug || (params as any).nxtPslug;
+  console.log("🧠 Metadata RAW params =", params);
+
+  // Vercel sometimes wraps params in a JSON string during RSC pass
+  let slug = params.slug;
+
+  // If slug is inside a JSON string (your log shows this)
+  if (typeof slug !== "string" && typeof (params as any).value === "string") {
+    const parsed = JSON.parse((params as any).value);
+    slug = parsed.slug;
+  }
+
+  console.log("🧠 Metadata resolved slug =", slug);
 
   const service = await getServiceBySlug(slug);
+  console.log("🧠 Metadata service =", service);
 
   if (!service) {
     return {
@@ -34,48 +44,38 @@ export async function generateMetadata(
     };
   }
 
-  // ALWAYS build slugs from database values
   const country = "india";
   const serviceType = "boarding";
+
   const state = (service.state || "").toLowerCase().replace(/\s+/g, "-");
   const district =
     service.district_slug ||
     (service.district || "").toLowerCase().replace(/\s+/g, "-");
   const area = (service.area_name || "").toLowerCase().replace(/\s+/g, "-");
 
-  const name = service.shop_name || service.shopName || "Pet Service";
+  const name = service.shop_name || "Pet Service";
   const desc = service.description || "Trusted pet service provider.";
   const img = service.shop_logo || service.image_urls?.[0] || "/default-og.png";
   const pet = service.pets?.[0] || "Pet";
 
-  const title = `${name} | ${pet} ${serviceType} in ${service.area_name}, ${service.district}`;
-
   return {
-    title,
+    title: `${name} | ${pet} ${serviceType} in ${service.area_name}`,
     description: desc,
     openGraph: {
-      title,
+      title: `${name} | ${pet} ${serviceType}`,
       description: desc,
       url: `https://myfellowpet.com/${country}/${serviceType}/${state}/${district}/${area}/${slug}`,
-      type: "article",
-      siteName: "MyFellowPet",
-      images: [
-        {
-          url: img,
-          width: 1200,
-          height: 630,
-          alt: name,
-        },
-      ],
+      images: [{ url: img }],
     },
     twitter: {
       card: "summary_large_image",
-      title,
+      title: name,
       description: desc,
       images: [img],
     },
   };
 }
+
 
 // -----------------------------------------------------------------------------
 // PAGE
@@ -84,10 +84,21 @@ export async function generateMetadata(
 export default async function ServicePage(
   { params }: { params: ServicePageParams }
 ) {
-  // 🔥 FIX #2 — Recover slug for Vercel
-  const slug = params.slug || (params as any).nxtPslug;
+
+  const slug =
+    params?.slug ??
+    (params as any)?.nxtPslug ??
+    "";
+
+  if (!slug) {
+    console.error("❌ PAGE ERROR: Missing slug", params);
+    return <div>Invalid service URL</div>;
+  }
 
   const service = await getServiceBySlug(slug);
+
+  console.log("🔥 DEBUG ServicePage params =", params);
+  console.log("🔥 DEBUG Loaded service doc =", service);
 
   if (!service) {
     return (
@@ -98,9 +109,7 @@ export default async function ServicePage(
   }
 
   const country = "india";
-  const serviceType = "boarding";
-
-  const name = service.shop_name || service.shopName || "Pet Service";
+  const name = service.shop_name || "Pet Service";
   const img = service.shop_logo || service.image_urls?.[0];
   const desc = service.description || "No description available.";
   const pets = service.pets || [];
@@ -116,12 +125,7 @@ export default async function ServicePage(
 
       {img && (
         <div className="relative w-full h-64 mt-4 rounded-xl overflow-hidden shadow-md">
-          <Image
-            src={img}
-            alt={name}
-            fill
-            style={{ objectFit: "cover" }}
-          />
+          <Image src={img} alt={name} fill style={{ objectFit: "cover" }} />
         </div>
       )}
 
