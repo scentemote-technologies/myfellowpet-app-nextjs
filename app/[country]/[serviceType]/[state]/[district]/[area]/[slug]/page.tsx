@@ -13,26 +13,23 @@ type ServicePageParams = {
   slug: string;
 };
 
-// -----------------------------------------------------------------------------
-// METADATA
-// -----------------------------------------------------------------------------
+// ============================================================================
+// METADATA (FIXED)
+// ============================================================================
 
 export async function generateMetadata(
-  { params }: { params: ServicePageParams }
+  props: { params: Promise<ServicePageParams> }
 ): Promise<Metadata> {
 
-  console.log("🧠 Metadata RAW params =", params);
+  const params = await props.params; // 🔥 FIX
+  console.log("🧠 Metadata params =", params);
 
-  // Vercel sometimes wraps params in a JSON string during RSC pass
-  let slug = params.slug;
+  const slug = params.slug;
 
-  // If slug is inside a JSON string (your log shows this)
-  if (typeof slug !== "string" && typeof (params as any).value === "string") {
-    const parsed = JSON.parse((params as any).value);
-    slug = parsed.slug;
+  if (!slug) {
+    console.error("❌ Metadata ERROR: Missing slug");
+    return { title: "Invalid Page" };
   }
-
-  console.log("🧠 Metadata resolved slug =", slug);
 
   const service = await getServiceBySlug(slug);
   console.log("🧠 Metadata service =", service);
@@ -49,7 +46,7 @@ export async function generateMetadata(
 
   const state = (service.state || "").toLowerCase().replace(/\s+/g, "-");
   const district =
-    service.district_slug ||
+    service.district_slug ??
     (service.district || "").toLowerCase().replace(/\s+/g, "-");
   const area = (service.area_name || "").toLowerCase().replace(/\s+/g, "-");
 
@@ -76,29 +73,26 @@ export async function generateMetadata(
   };
 }
 
-
-// -----------------------------------------------------------------------------
-// PAGE
-// -----------------------------------------------------------------------------
+// ============================================================================
+// PAGE (FIXED)
+// ============================================================================
 
 export default async function ServicePage(
-  { params }: { params: ServicePageParams }
+  props: { params: Promise<ServicePageParams> }
 ) {
 
-  const slug =
-    params?.slug ??
-    (params as any)?.nxtPslug ??
-    "";
+  const params = await props.params; // 🔥 FIX
+  console.log("🔥 PAGE params =", params);
+
+  const slug = params.slug;
 
   if (!slug) {
-    console.error("❌ PAGE ERROR: Missing slug", params);
+    console.error("❌ PAGE ERROR: Missing slug");
     return <div>Invalid service URL</div>;
   }
 
   const service = await getServiceBySlug(slug);
-
-  console.log("🔥 DEBUG ServicePage params =", params);
-  console.log("🔥 DEBUG Loaded service doc =", service);
+  console.log("🔥 Loaded service =", service);
 
   if (!service) {
     return (
@@ -108,12 +102,13 @@ export default async function ServicePage(
     );
   }
 
-  const country = "india";
   const name = service.shop_name || "Pet Service";
   const img = service.shop_logo || service.image_urls?.[0];
   const desc = service.description || "No description available.";
   const pets = service.pets || [];
   const price = service.min_price || "—";
+
+  const country = "india";
 
   return (
     <main className="min-h-screen max-w-4xl mx-auto p-6">
