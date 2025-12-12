@@ -14,25 +14,20 @@ type ServicePageParams = {
 };
 
 // ============================================================================
-// METADATA (FIXED)
+// METADATA
 // ============================================================================
 
 export async function generateMetadata(
   props: { params: Promise<ServicePageParams> }
 ): Promise<Metadata> {
-
-  const params = await props.params; // 🔥 FIX
-  console.log("🧠 Metadata params =", params);
-
+  const params = await props.params;
   const slug = params.slug;
 
   if (!slug) {
-    console.error("❌ Metadata ERROR: Missing slug");
     return { title: "Invalid Page" };
   }
 
   const service = await getServiceBySlug(slug);
-  console.log("🧠 Metadata service =", service);
 
   if (!service) {
     return {
@@ -40,9 +35,6 @@ export async function generateMetadata(
       description: "The service you're looking for does not exist.",
     };
   }
-
-  const country = "india";
-  const serviceType = "boarding";
 
   const state = (service.state || "").toLowerCase().replace(/\s+/g, "-");
   const district =
@@ -56,12 +48,12 @@ export async function generateMetadata(
   const pet = service.pets?.[0] || "Pet";
 
   return {
-    title: `${name} | ${pet} ${serviceType} in ${service.area_name}`,
+    title: `${name} | ${pet} Boarding in ${service.area_name}`,
     description: desc,
     openGraph: {
-      title: `${name} | ${pet} ${serviceType}`,
+      title: name,
       description: desc,
-      url: `https://myfellowpet.com/${country}/${serviceType}/${state}/${district}/${area}/${slug}`,
+      url: `https://myfellowpet.com/india/boarding/${state}/${district}/${area}/${slug}`,
       images: [{ url: img }],
     },
     twitter: {
@@ -74,25 +66,20 @@ export async function generateMetadata(
 }
 
 // ============================================================================
-// PAGE (FIXED)
+// PAGE
 // ============================================================================
 
 export default async function ServicePage(
   props: { params: Promise<ServicePageParams> }
 ) {
-
-  const params = await props.params; // 🔥 FIX
-  console.log("🔥 PAGE params =", params);
-
+  const params = await props.params;
   const slug = params.slug;
 
   if (!slug) {
-    console.error("❌ PAGE ERROR: Missing slug");
     return <div>Invalid service URL</div>;
   }
 
   const service = await getServiceBySlug(slug);
-  console.log("🔥 Loaded service =", service);
 
   if (!service) {
     return (
@@ -108,31 +95,78 @@ export default async function ServicePage(
   const pets = service.pets || [];
   const price = service.min_price || "—";
 
-  const country = "india";
-
   return (
-    <main className="min-h-screen max-w-4xl mx-auto p-6">
-      <h1 className="text-3xl font-bold">{name}</h1>
+    <>
+      {/* ========================================================= */}
+      {/* ✅ STEP 1 — LocalBusiness Schema */}
+      {/* ========================================================= */}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "LocalBusiness",
+            "@id": `https://myfellowpet.com/${service.seo_slug}`,
+            name: service.shop_name,
+            description: service.description,
+            image: service.shop_logo || service.image_urls?.[0],
+            url: `https://myfellowpet.com/india/boarding/${service.state
+              ?.toLowerCase()
+              .replace(/\s+/g, "-")}/${service.district_slug}/${service.area_name
+              ?.toLowerCase()
+              .replace(/\s+/g, "-")}/${service.seo_slug}`,
+            telephone: service.owner_phone,
+            priceRange: "₹₹",
+            address: {
+              "@type": "PostalAddress",
+              streetAddress: service.street,
+              addressLocality: service.area_name,
+              addressRegion: service.state,
+              postalCode: service.postal_code,
+              addressCountry: "IN",
+            },
+            geo: service.location_geopoint
+              ? {
+                  "@type": "GeoCoordinates",
+                  latitude: service.location_geopoint.latitude,
+                  longitude: service.location_geopoint.longitude,
+                }
+              : undefined,
+            openingHoursSpecification: {
+              "@type": "OpeningHoursSpecification",
+              opens: service.open_time,
+              closes: service.close_time,
+            },
+          }),
+        }}
+      />
 
-      <p className="text-gray-600 mt-2">
-        {service.area_name}, {service.district}, {service.state}, {country}
-      </p>
+      {/* ========================================================= */}
+      {/* PAGE UI */}
+      {/* ========================================================= */}
+      <main className="min-h-screen max-w-4xl mx-auto p-6">
+        <h1 className="text-3xl font-bold">{name}</h1>
 
-      {img && (
-        <div className="relative w-full h-64 mt-4 rounded-xl overflow-hidden shadow-md">
-          <Image src={img} alt={name} fill style={{ objectFit: "cover" }} />
-        </div>
-      )}
-
-      <div className="mt-6 space-y-3">
-        <p className="text-lg font-semibold">Starts from ₹{price}</p>
-
-        <p className="text-gray-700">{desc}</p>
-
-        <p className="text-sm text-gray-500 mt-2">
-          Pets: {pets.length ? pets.join(", ") : "Not specified"}
+        <p className="text-gray-600 mt-2">
+          {service.area_name}, {service.district}, {service.state}, India
         </p>
-      </div>
-    </main>
+
+        {img && (
+          <div className="relative w-full h-64 mt-4 rounded-xl overflow-hidden shadow-md">
+            <Image src={img} alt={name} fill style={{ objectFit: "cover" }} />
+          </div>
+        )}
+
+        <div className="mt-6 space-y-3">
+          <p className="text-lg font-semibold">Starts from ₹{price}</p>
+
+          <p className="text-gray-700">{desc}</p>
+
+          <p className="text-sm text-gray-500 mt-2">
+            Pets: {pets.length ? pets.join(", ") : "Not specified"}
+          </p>
+        </div>
+      </main>
+    </>
   );
 }
