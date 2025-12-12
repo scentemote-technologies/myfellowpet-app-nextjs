@@ -98,7 +98,7 @@ export default async function ServicePage(
   return (
     <>
       {/* ========================================================= */}
-      {/* ✅ STEP 1 — LocalBusiness Schema */}
+      {/* ✅ STEP 1 — LocalBusiness Schema (UNCHANGED) */}
       {/* ========================================================= */}
       <script
         type="application/ld+json"
@@ -142,6 +142,53 @@ export default async function ServicePage(
       />
 
       {/* ========================================================= */}
+      {/* ✅ STEP 2 — FAQ Schema (NEW) */}
+      {/* ========================================================= */}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "FAQPage",
+            mainEntity: [
+              {
+                "@type": "Question",
+                name: `What is the starting price at ${service.shop_name}?`,
+                acceptedAnswer: {
+                  "@type": "Answer",
+                  text: `The starting price at ${service.shop_name} is ₹${price} per day.`,
+                },
+              },
+              {
+                "@type": "Question",
+                name: "What pets are accepted at this boarding center?",
+                acceptedAnswer: {
+                  "@type": "Answer",
+                  text: `This service accepts ${pets.join(", ")}.`,
+                },
+              },
+              {
+                "@type": "Question",
+                name: "What are the check-in and check-out timings?",
+                acceptedAnswer: {
+                  "@type": "Answer",
+                  text: `Check-in starts at ${service.open_time} and check-out is by ${service.close_time}.`,
+                },
+              },
+              {
+                "@type": "Question",
+                name: "Where is this pet boarding service located?",
+                acceptedAnswer: {
+                  "@type": "Answer",
+                  text: `${service.shop_name} is located at ${service.full_address}.`,
+                },
+              },
+            ],
+          }),
+        }}
+      />
+
+      {/* ========================================================= */}
       {/* PAGE UI */}
       {/* ========================================================= */}
       <main className="min-h-screen max-w-4xl mx-auto p-6">
@@ -159,9 +206,7 @@ export default async function ServicePage(
 
         <div className="mt-6 space-y-3">
           <p className="text-lg font-semibold">Starts from ₹{price}</p>
-
           <p className="text-gray-700">{desc}</p>
-
           <p className="text-sm text-gray-500 mt-2">
             Pets: {pets.length ? pets.join(", ") : "Not specified"}
           </p>
