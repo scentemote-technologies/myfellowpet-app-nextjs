@@ -88,9 +88,9 @@ const ServiceCard: React.FC<ServiceCardProps> = ({ service }) => {
   const serviceType = "boarding";
 
   const stateSlug = (service.state || "unknown").toLowerCase().replace(/\s+/g, "-");
-  const districtSlug = (service.district || "unknown")
-    .toLowerCase()
-    .replace(/\s+/g, "-");
+  const districtSlug = service.district_slug 
+  || (service.district || "unknown").toLowerCase().replace(/\s+/g, "-");
+
   const areaSlug = (area_name || "unknown").toLowerCase().replace(/\s+/g, "-");
 
   // 🔥 ALWAYS USE FIRESTORE SEO SLUG — NEVER REGENERATE!
