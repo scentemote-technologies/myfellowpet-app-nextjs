@@ -4,20 +4,24 @@ import type { Metadata } from "next";
 
 export const dynamic = "force-dynamic";
 
-export async function generateMetadata(
-  { params }: {
-    params: {
-      country: string;
-      serviceType: string;
-      state: string;
-      district: string;
-      area: string;
-      slug: string;
-    };
-  }
-): Promise<Metadata> {
+// URL params type (Next.js injects these)
+type ServicePageParams = {
+  country: string;
+  serviceType: string;
+  state: string;
+  district: string;
+  area: string;
+  slug: string;
+};
 
-  const { slug, country, serviceType, state, district, area } = params;
+// -----------------------------------------------------------------------------
+// METADATA
+// -----------------------------------------------------------------------------
+
+export async function generateMetadata(
+  { params }: { params: ServicePageParams }
+): Promise<Metadata> {
+  const { slug } = params;
 
   const service = await getServiceBySlug(slug);
 
@@ -28,50 +32,59 @@ export async function generateMetadata(
     };
   }
 
-  const title = `${service.shop_name} | ${service.pets?.[0] || "Pet"} ${serviceType} in ${area}, ${district}`;
-  const description = `Book ${service.pets?.[0] || "pet"} ${serviceType} at ${service.shop_name} in ${area}, ${district}. Starts from ₹${service.min_price || "N/A"}. Trusted and verified service provider.`;
+  // ALWAYS derive URL parts from Firestore — never trust URL params.
+  const country = "india";
+  const serviceType = "boarding";
+
+  const state = (service.state || "").toLowerCase().replace(/\s+/g, "-");
+  const district =
+    service.district_slug ||
+    (service.district || "").toLowerCase().replace(/\s+/g, "-");
+
+  const area = (service.area_name || "").toLowerCase().replace(/\s+/g, "-");
+
+  const name = service.shop_name || "Pet Service";
+  const desc = service.description || "Trusted pet service provider.";
+  const img = service.shop_logo || service.image_urls?.[0] || "/default-og.png";
+  const pet = service.pets?.[0] || "Pet";
+
+  const title = `${name} | ${pet} ${serviceType} in ${service.area_name}, ${service.district}`;
 
   return {
     title,
-    description,
+    description: desc,
     openGraph: {
       title,
-      description,
+      description: desc,
       url: `https://myfellowpet.com/${country}/${serviceType}/${state}/${district}/${area}/${slug}`,
       type: "article",
       siteName: "MyFellowPet",
       images: [
         {
-          url: service.shop_image || "https://myfellowpet.com/default-og.png",
+          url: img,
           width: 1200,
           height: 630,
-          alt: service.shopName,
+          alt: name,
         },
       ],
     },
     twitter: {
       card: "summary_large_image",
       title,
-      description,
-      images: [service.shop_image || "https://myfellowpet.com/default-og.png"],
+      description: desc,
+      images: [img],
     },
   };
 }
 
-export default async function ServicePage({
-  params,
-}: {
-  params: {
-    country: string;
-    serviceType: string;
-    state: string;
-    district: string;
-    area: string;
-    slug: string;
-  };
-}) {
+// -----------------------------------------------------------------------------
+// PAGE RENDER
+// -----------------------------------------------------------------------------
 
-  const { slug, country, serviceType, state, district, area } = params;
+export default async function ServicePage(
+  { params }: { params: ServicePageParams }
+) {
+  const { slug } = params;
 
   const service = await getServiceBySlug(slug);
 
@@ -83,19 +96,29 @@ export default async function ServicePage({
     );
   }
 
+  // Always rely on Firestore, not the URL
+  const country = "india";
+  const serviceType = "boarding";
+
+  const name = service.shop_name || "Pet Service";
+  const img = service.shop_logo || service.image_urls?.[0];
+  const desc = service.description || "No description available.";
+  const pets = service.pets || [];
+  const price = service.min_price || "—";
+
   return (
     <main className="min-h-screen max-w-4xl mx-auto p-6">
-      <h1 className="text-3xl font-bold">{service.shopName}</h1>
+      <h1 className="text-3xl font-bold">{name}</h1>
 
       <p className="text-gray-600 mt-2">
-        {area}, {district}, {state}, {country}
+        {service.area_name}, {service.district}, {service.state}, {country}
       </p>
 
-      {service.shop_image && (
+      {img && (
         <div className="relative w-full h-64 mt-4 rounded-xl overflow-hidden shadow-md">
           <Image
-            src={service.shop_image}
-            alt={service.shopName}
+            src={img}
+            alt={name}
             fill
             style={{ objectFit: "cover" }}
           />
@@ -103,26 +126,14 @@ export default async function ServicePage({
       )}
 
       <div className="mt-6 space-y-3">
-        <p className="text-lg font-semibold">
-          Starts from ₹{service.min_price ?? "—"}
-        </p>
+        <p className="text-lg font-semibold">Starts from ₹{price}</p>
 
-        <p className="text-gray-700">
-          {service.description ?? "No description added yet."}
-        </p>
+        <p className="text-gray-700">{desc}</p>
 
         <p className="text-sm text-gray-500 mt-2">
-          Pets: {service.pets?.join(", ") ?? "Not specified"}
+          Pets: {pets.length ? pets.join(", ") : "Not specified"}
         </p>
       </div>
-
-      <a
-        href={`https://wa.me/919876543210?text=I'm interested in ${service.shopName}`}
-        target="_blank"
-        className="block w-full mt-6 py-3 bg-green-600 text-white text-center rounded-full font-bold"
-      >
-        Contact on WhatsApp
-      </a>
     </main>
   );
 }
