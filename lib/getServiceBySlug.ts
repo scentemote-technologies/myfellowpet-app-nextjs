@@ -5,7 +5,9 @@ import { buildShopSlug } from "./slug";
 
 export async function getServiceBySlug(slug: string) {
   const adminDB = await getAdminDB();
+  slug = slug.toLowerCase(); // IMPORTANT
 
+  // 1️⃣ Try direct Firestore seo_slug match
   const snap = await adminDB
     .collection("users-sp-boarding")
     .where("seo_slug", "==", slug)
@@ -17,13 +19,14 @@ export async function getServiceBySlug(slug: string) {
     return { service_id: doc.id, ...(doc.data() as any) };
   }
 
+  // 2️⃣ Fallback — match based on shopName → buildShopSlug()
   const allDocs = await adminDB.collection("users-sp-boarding").get();
 
   for (const doc of allDocs.docs) {
     const data = doc.data() as any;
     const shopName = data.shop_name || data.shopName || "";
-    const primaryPet = data.pets?.[0] || "pet";
-    const generatedSlug = buildShopSlug(shopName, primaryPet);
+
+    const generatedSlug = buildShopSlug(shopName);
 
     if (generatedSlug === slug) {
       return { service_id: doc.id, ...data };

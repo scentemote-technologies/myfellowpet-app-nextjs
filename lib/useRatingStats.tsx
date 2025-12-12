@@ -3,8 +3,8 @@
 
 import { useState, useEffect } from 'react';
 import { collection, getDocs, DocumentData } from 'firebase/firestore';
-import { db } from './firebase'; 
-
+// In your custom hooks:
+import { db, GeoPointLike } from './firebase'; // Import only what is needed
 export interface RatingStats { // Keep this as a named export
     avg: number;
     count: number;

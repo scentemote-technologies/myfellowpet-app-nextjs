@@ -23,12 +23,14 @@ export const slugify = (str: string): string => {
  * pet: "Dog"
  * → "paws-and-claws-dog-center"
  */
-export const buildShopSlug = (shopName: string, pet: string): string => {
-  const cleanShop = slugify(shopName || "");
-  const cleanPet = slugify(pet || "pet");
-  const parts = [cleanShop, cleanPet, "center"].filter(Boolean);
-  return parts.join("-");
-};
+export function buildShopSlug(shopName: string) {
+  return shopName
+    .trim()
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-+|-+$/g, "");
+}
+
 
 /**
  * OPTIONAL: Reverse a slug back into components

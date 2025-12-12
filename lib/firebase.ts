@@ -17,7 +17,6 @@ const app = !getApps().length ? initializeApp(firebaseConfig) : getApp();
 
 // --- EXPORT SERVICES ---
 
-// Use a type for the GeoPoint structure, as Firestore's GeoPoint isn't always available client-side in non-Node contexts
 export interface GeoPointLike {
     latitude: number;
     longitude: number;

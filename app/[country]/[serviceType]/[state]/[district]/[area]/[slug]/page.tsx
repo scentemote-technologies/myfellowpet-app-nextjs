@@ -4,7 +4,7 @@ import type { Metadata } from "next";
 
 export const dynamic = "force-dynamic";
 
-// URL params type (Next.js injects these)
+// URL params type
 type ServicePageParams = {
   country: string;
   serviceType: string;
@@ -21,7 +21,9 @@ type ServicePageParams = {
 export async function generateMetadata(
   { params }: { params: ServicePageParams }
 ): Promise<Metadata> {
-  const { slug } = params;
+
+  // 🔥 FIX #1 — Handle Vercel's weird param name
+  const slug = params.slug || (params as any).nxtPslug;
 
   const service = await getServiceBySlug(slug);
 
@@ -32,18 +34,16 @@ export async function generateMetadata(
     };
   }
 
-  // ALWAYS derive URL parts from Firestore — never trust URL params.
+  // ALWAYS build slugs from database values
   const country = "india";
   const serviceType = "boarding";
-
   const state = (service.state || "").toLowerCase().replace(/\s+/g, "-");
   const district =
     service.district_slug ||
     (service.district || "").toLowerCase().replace(/\s+/g, "-");
-
   const area = (service.area_name || "").toLowerCase().replace(/\s+/g, "-");
 
-  const name = service.shop_name || "Pet Service";
+  const name = service.shop_name || service.shopName || "Pet Service";
   const desc = service.description || "Trusted pet service provider.";
   const img = service.shop_logo || service.image_urls?.[0] || "/default-og.png";
   const pet = service.pets?.[0] || "Pet";
@@ -78,13 +78,14 @@ export async function generateMetadata(
 }
 
 // -----------------------------------------------------------------------------
-// PAGE RENDER
+// PAGE
 // -----------------------------------------------------------------------------
 
 export default async function ServicePage(
   { params }: { params: ServicePageParams }
 ) {
-  const { slug } = params;
+  // 🔥 FIX #2 — Recover slug for Vercel
+  const slug = params.slug || (params as any).nxtPslug;
 
   const service = await getServiceBySlug(slug);
 
@@ -96,11 +97,10 @@ export default async function ServicePage(
     );
   }
 
-  // Always rely on Firestore, not the URL
   const country = "india";
   const serviceType = "boarding";
 
-  const name = service.shop_name || "Pet Service";
+  const name = service.shop_name || service.shopName || "Pet Service";
   const img = service.shop_logo || service.image_urls?.[0];
   const desc = service.description || "No description available.";
   const pets = service.pets || [];

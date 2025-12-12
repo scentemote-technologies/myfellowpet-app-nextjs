@@ -86,12 +86,22 @@ const ServiceCard: React.FC<ServiceCardProps> = ({ service }) => {
   // URL Structure
   const country = "india";
   const serviceType = "boarding";
+  const slugify = (str: string) =>
+  str
+    ?.toLowerCase()
+    .trim()
+    .replace(/[^a-z0-9]+/g, "-")        // remove special chars safely
+    .replace(/^-+|-+$/g, "");           // trim hyphens
 
-  const stateSlug = (service.state || "unknown").toLowerCase().replace(/\s+/g, "-");
-  const districtSlug = service.district_slug 
-  || (service.district || "unknown").toLowerCase().replace(/\s+/g, "-");
 
-  const areaSlug = (area_name || "unknown").toLowerCase().replace(/\s+/g, "-");
+  const stateSlug = slugify(service.state || "unknown");
+
+  const districtSlug =
+  service.district_slug || slugify(service.district || "unknown");
+
+
+  const areaSlug = slugify(area_name || "unknown");
+
 
   // 🔥 ALWAYS USE FIRESTORE SEO SLUG — NEVER REGENERATE!
   const finalSlug = seo_slug || "unknown";
