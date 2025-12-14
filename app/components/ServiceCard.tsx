@@ -3,8 +3,6 @@ import React from "react";
 import Image from "next/image";
 import Link from "next/link";
 
-import { ServiceCardData } from "@/lib/useBoardingServices";
-import { useRatingStats } from "@/lib/useRatingStats";
 
 import {
   FaHeart,
@@ -14,6 +12,8 @@ import {
   FaMapMarkerAlt,
   FaTag,
 } from "react-icons/fa";
+import { ServiceCardData } from "../../lib/useBoardingServices";
+import { useRatingStats } from "../../lib/useRatingStats";
 
 const kPrimary = "#2CB4B6";
 const kAccent = "#F67B0D";

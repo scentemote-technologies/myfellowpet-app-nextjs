@@ -1,11 +1,11 @@
 // @/app/[country]/[serviceType]/[state]/[district]/[area]/[slug]/page.tsx
 // ✨ INTEGRATED COMPLEX DATA FROM FLUTTER/DART PAGE ✨
 
-import { getServiceBySlug } from "@/lib/getServiceBySlug";
 import Image from "next/image";
 import type { Metadata } from "next";
-import { capitalize, formatPrice, getRatingStars } from "@/lib/utils"; // Assuming these exist
 import Link from "next/link";
+import { getServiceBySlug } from "../../../../../../../lib/getServiceBySlug";
+import { capitalize, formatPrice, getRatingStars } from "../../../../../../../lib/utils";
 
 export const dynamic = "force-dynamic";
 

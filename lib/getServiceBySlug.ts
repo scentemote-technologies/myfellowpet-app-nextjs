@@ -1,6 +1,7 @@
 "use server";
 
-import { getAdminDB } from "@/lib/firebaseAdmin";
+
+import { getAdminDB } from "./firebaseAdmin";
 import { buildShopSlug } from "./slug";
 
 export async function getServiceBySlug(slug: string) {
