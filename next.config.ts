@@ -6,7 +6,17 @@ const nextConfig = {
   },
 
   images: {
-    unoptimized: true, // 🔥 Important: avoids Next Image optimization server
+    unoptimized: true, // 🔥 avoids Next Image optimization server
+  },
+
+  // ✅ FIX: Allow deep links like /boarding/:id
+  async rewrites() {
+    return [
+      {
+        source: "/boarding/:path*",
+        destination: "/", // serve homepage, return 200
+      },
+    ];
   },
 };
 
