@@ -1,0 +1,241 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Delete Account & Data — MyFellowPet</title>
+  <meta name="description" content="Request deletion of your MyFellowPet account and associated data. Clear instructions, verification steps, and retention details." />
+  <style>
+    :root{
+      --bg:#f6fbfb;
+      --card:#ffffff;
+      --primary:#2CB4B6;
+      --muted:#6b7280;
+      --accent:#F67B0D;
+      --danger:#d43f3a;
+      --maxw:980px;
+      --radius:12px;
+      font-family: Inter, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    }
+    html,body{height:100%;margin:0;background:var(--bg);color:#111827}
+    .wrap{max-width:var(--maxw);margin:48px auto;padding:20px}
+    .card{background:var(--card);border-radius:var(--radius);box-shadow:0 8px 30px rgba(15,23,42,0.06);overflow:hidden}
+    header{padding:28px 32px;border-bottom:1px solid #eef2f6;display:flex;gap:20px;align-items:center}
+    .brand{display:flex;flex-direction:column}
+    .brand h1{margin:0;font-size:20px;color:var(--primary);letter-spacing:0.2px}
+    .brand p{margin:2px 0 0 0;color:var(--muted);font-size:13px}
+    .content{padding:28px 32px}
+    h2{margin:0 0 8px 0;font-size:20px;color:#0f1724}
+    p{color:var(--muted);line-height:1.5}
+    .box{background:#fbffff;border:1px solid #e6f6f6;padding:16px;border-radius:10px;margin:16px 0}
+    .steps{display:grid;grid-template-columns:1fr;gap:12px;margin-top:12px}
+    .step{display:flex;gap:12px}
+    .num{width:36px;height:36px;background:var(--primary);color:white;border-radius:8px;display:flex;align-items:center;justify-content:center;font-weight:700}
+    .kbd{background:#0f1724;color:white;padding:6px 10px;border-radius:8px;font-weight:600;font-size:13px}
+    .note{font-size:13px;color:#374151;margin-top:8px}
+    .table{margin-top:12px;border-radius:8px;overflow:hidden;border:1px solid #eef2f6}
+    .table > div{display:grid;grid-template-columns:1fr auto;padding:12px 16px;border-bottom:1px solid #f3f7f8}
+    .table > div:last-child{border-bottom:0}
+    footer{padding:20px 32px;border-top:1px solid #eef2f6;background:linear-gradient(90deg, rgba(236,255,255,0.6), rgba(255,255,255,0.6));display:flex;align-items:center;justify-content:space-between}
+    a.button{background:var(--primary);color:white;padding:10px 14px;border-radius:10px;text-decoration:none;font-weight:700}
+    a.link{color:var(--primary);text-decoration:none;font-weight:600}
+    .danger{color:var(--danger);font-weight:700}
+    .muted-small{color:var(--muted);font-size:13px}
+    .split{display:flex;gap:12px;flex-wrap:wrap}
+    .chip{background:#fbffff;border:1px solid #eef6f6;padding:8px 12px;border-radius:10px;font-weight:600;color:var(--primary)}
+    .section-title{margin-top:22px;font-size:16px;font-weight:700;color:#0f1724}
+    .faq{margin-top:12px}
+    .note-plain{background:#fff9f3;border-left:4px solid var(--accent);padding:12px;border-radius:8px;color:#6b4b2f}
+    @media (max-width:640px){
+      .wrap{margin:20px;padding:16px}
+      header, .content, footer{padding:18px}
+      .num{width:32px;height:32px}
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap" role="main" aria-labelledby="page-title">
+    <div class="card" aria-hidden="false">
+      <header>
+        <div class="brand" aria-hidden="true">
+          <h1>MyFellowPet</h1>
+          <p>Account & Data Deletion — Request page</p>
+        </div>
+        <div style="margin-left:auto;text-align:right">
+          <div style="font-size:13px;color:var(--muted)">Need help?</div>
+          <a href="mailto:support@myfellowpet.com" class="link">support@myfellowpet.com</a>
+        </div>
+      </header>
+
+      <div class="content">
+        <h2 id="page-title">Request deletion of your MyFellowPet account or specific data</h2>
+        <p>This page explains how to request a full account deletion or partial deletion (pet profiles, specific records), what will be removed and what we will retain for legal, fraud prevention or operational reasons. We verify requests to protect you and other users.</p>
+
+        <div class="box" role="region" aria-label="Quick summary">
+          <strong>Quick summary</strong>
+          <ul style="margin:8px 0 0 18px;color:var(--muted)">
+            <li><strong>Full account deletion:</strong> Permanently removes most personal data from our systems after verification (see retained items below).</li>
+            <li><strong>Partial deletion:</strong> You can delete pet profiles inside the app. Some booking-related pet info will remain in booking records.</li>
+            <li><strong>Processing time:</strong> Usually completed within <strong>7 business days</strong> after verification.</li>
+            <li><strong>Support & appeals:</strong> Email <a class="link" href="mailto:support@myfellowpet.com">support@myfellowpet.com</a> with subject <code>Account Deletion Request</code>.</li>
+          </ul>
+        </div>
+
+        <div class="section-title">How to request</div>
+        <div class="steps" aria-hidden="false">
+          <div class="step">
+            <div class="num">1</div>
+            <div>
+              <div style="font-weight:700">Send a verified request</div>
+              <div class="muted-small">Email <a class="link" href="mailto:support@myfellowpet.com">support@myfellowpet.com</a> OR open the in-app Support → Privacy → Delete Account flow.</div>
+              <div class="note">Include your registered phone number (with country code), account name, and booking ID(s) if relevant.</div>
+            </div>
+          </div>
+
+          <div class="step">
+            <div class="num">2</div>
+            <div>
+              <div style="font-weight:700">Verification</div>
+              <p class="muted-small">We will confirm account ownership by sending an OTP to your registered phone number or a verification link to your registered email. If you cannot complete these, provide supporting evidence (a screenshot showing your account/profile or a recent booking ID).</p>
+            </div>
+          </div>
+
+          <div class="step">
+            <div class="num">3</div>
+            <div>
+              <div style="font-weight:700">Processing</div>
+              <p class="muted-small">After verification we will delete the eligible data and email you a confirmation. Typical processing time: <strong>7 business days</strong>. Complex or legal requests may take longer.</p>
+            </div>
+          </div>
+
+          <div class="step">
+            <div class="num">4</div>
+            <div>
+              <div style="font-weight:700">Confirmation & logs</div>
+              <p class="muted-small">We will send a confirmation email once deletion is completed. Note: some minimal records may be retained for legitimate reasons (see “What may be retained”).</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="section-title">What users can delete or edit directly</div>
+        <div class="table" role="table" aria-label="Deletable items">
+          <div role="row"><div role="cell">Pet profile (full profile & photos)</div><div role="cell">✓ — Can delete in-app (but booking records referencing that pet remain)</div></div>
+          <div role="row"><div role="cell">Account profile fields</div><div role="cell">Editable (name, email*, address) — Deletion only via full account deletion</div></div>
+          <div role="row"><div role="cell">Uploaded Images & Documents</div><div role="cell">✖ — Cannot be deleted directly by users; request via support</div></div>
+          <div role="row"><div role="cell">Chat history (1:1 conversations)</div><div role="cell">✖ — Retained (cannot be deleted by user)</div></div>
+          <div role="row"><div role="cell">Support tickets & messages</div><div role="cell">✖ — Retained for operational/legal reasons</div></div>
+          <div role="row"><div role="cell">Phone number (registered identifier)</div><div role="cell">✖ — Cannot be removed without full account deletion; phone number used for verification</div></div>
+        </div>
+
+        <div class="section-title">Partial deletion — important clarifications</div>
+        <p class="muted-small">When you delete a pet profile inside the app:</p>
+        <ul style="margin:8px 0 0 18px;color:var(--muted)">
+          <li>We remove the pet profile and associated free-standing metadata (photos in the pet profile gallery, profile notes stored in the pet object).</li>
+          <li><strong>Booking records</strong> that referenced that pet (past bookings, invoices, cancellation history) remain in our service records for auditing, refunds, disputes or legal reasons — we only remove the redundant pet profile entry, not the booking data needed to support service history.</li>
+          <li>If you need additional redaction in booking records, open a support ticket with a valid reason; we'll review on a case-by-case basis.</li>
+        </ul>
+
+        <div class="section-title">What will be deleted by a full account deletion</div>
+        <p class="muted-small">After verified full-account deletion we will remove:</p>
+        <ul style="margin:8px 0 0 18px;color:var(--muted)">
+          <li>Account profile (name, email) — phone number remains as an internal audit entry for a limited retention period (see below).</li>
+          <li>User-uploaded profile pictures and non-booking images stored in user profile areas (subject to third-party backups and CDN retention windows).</li>
+          <li>Pet profiles (unless retained in active bookings).</li>
+          <li>Account metadata, preferences, and push-token associations.</li>
+          <li>Personal identifiers used for marketing and personalization.</li>
+        </ul>
+
+        <div class="section-title">What may be retained (and why)</div>
+        <p class="muted-small">We may retain a minimal subset of records for legitimate reasons including legal compliance, fraud prevention, tax/accounting, and dispute resolution:</p>
+        <ul style="margin:8px 0 0 18px;color:var(--muted)">
+          <li><strong>Booking records & invoices:</strong> Kept for regulatory, tax and dispute purposes (retention varies by jurisdiction).</li>
+          <li><strong>Transaction logs & audit trails:</strong> Minimal metadata (transaction IDs, timestamps) retained to investigate fraud or to comply with legal obligations.</li>
+          <li><strong>Support tickets & safety logs:</strong> Retained to ensure platform safety and for investigations.</li>
+          <li><strong>Anonymized analytics:</strong> Aggregated data that cannot identify you personally may be kept indefinitely to improve the service.</li>
+        </ul>
+
+        <div class="section-title">Retention periods (typical)</div>
+        <p class="muted-small">Retention may vary by country and legal requirements. Typical examples:</p>
+        <ul style="margin:8px 0 0 18px;color:var(--muted)">
+          <li>Booking & invoice records: retained for at least <strong>7 years</strong> where required (tax/accounting), otherwise up to <strong>3 years</strong>.</li>
+          <li>Fraud logs & security records: retained for up to <strong>2 years</strong> depending on the nature of the incident.</li>
+          <li>Support tickets: retained for operational needs (commonly <strong>1–3 years</strong>), though anonymized summaries may be kept longer.</li>
+        </ul>
+
+        <div class="section-title">Why some items are not user-deletable</div>
+        <p class="muted-small">Certain data (chat, support tickets, booking records) are preserved because they are part of the service history — they may be needed to resolve disputes, support refunds, or comply with legal/financial obligations. If you need removal beyond the standard flows, contact support and provide justification; we will review and respond per applicable law.</p>
+
+        <div class="section-title">Data deletion vs editing</div>
+        <p class="muted-small">You can edit most personal profile fields in the app (name, email*, address). The phone number is used as the primary verified identifier and cannot be removed without a full-account deletion request. Email may be edited but verification may be required.</p>
+
+        <div class="section-title">How we verify requests</div>
+        <p class="muted-small">To protect accounts and prevent abuse we verify requests using one of:</p>
+        <ul style="margin:8px 0 0 18px;color:var(--muted)">
+          <li>OTP sent to your registered phone number</li>
+          <li>Verification link sent to your registered email</li>
+          <li>Supporting documentation (screenshot of account, a recent booking ID) if the above are not available</li>
+        </ul>
+
+        <div class="section-title">How to request limited data deletion (example flows)</div>
+        <div class="box">
+          <strong>Delete a pet profile:</strong>
+          <ol style="margin:8px 0 0 18px;color:var(--muted)">
+            <li>Open the app → Profile → Pets → Select pet → Delete pet.</li>
+            <li>Pet profile will be removed immediately unless it's referenced by an active booking; historical booking records will still show the pet metadata for audit purposes.</li>
+          </ol>
+        </div>
+
+        <div class="box">
+          <strong>Request deletion of uploaded files / chat redaction:</strong>
+          <ol style="margin:8px 0 0 18px;color:var(--muted)">
+            <li>Email <a class="link" href="mailto:support@myfellowpet.com">support@myfellowpet.com</a> with subject <code>Delete files / redact chat</code>.</li>
+            <li>Attach a screenshot and list of the items you want removed (approximate date/time, booking ID if applicable).</li>
+            <li>We will review and respond within <strong>7 business days</strong>. Some items may require legal review.</li>
+          </ol>
+        </div>
+
+        <div class="section-title">How to request full account deletion (quick link)</div>
+        <p class="muted-small">To request full account deletion, email <a class="link" href="mailto:support@myfellowpet.com">support@myfellowpet.com</a> (subject: <code>Account Deletion Request</code>) or use the in-app Support → Privacy → Delete Account tool. Expect a verification step (OTP or email) and then processing within <strong>7 business days</strong>.</p>
+
+        <div class="section-title">Legal & safety exceptions</div>
+        <p class="muted-small">We may retain or withhold deletion of certain records if required by law or necessary for an ongoing investigation, dispute resolution, or to prevent fraud. If we deny a deletion request for legal reasons we will notify you with the legal basis and relevant contact details where permitted.</p>
+
+        <div class="section-title">Questions / Escalation</div>
+        <p class="muted-small">If you have questions, need faster processing, or want to appeal, email <a class="link" href="mailto:support@myfellowpet.com">support@myfellowpet.com</a> with <strong>URGENT: Account Deletion</strong> in the subject and include your registered phone number and a brief reason.</p>
+
+        <div class="faq">
+          <div class="section-title">FAQ</div>
+          <div style="margin-top:8px">
+            <strong>Q: Will my chat history be removed?</strong>
+            <p class="muted-small">A: No — chat records are currently retained for safety and dispute resolution. You can request redaction via support; each request will be reviewed.</p>
+
+            <strong>Q: If I delete a pet, will bookings disappear?</strong>
+            <p class="muted-small">A: No — bookings that referenced that pet will remain for auditing and legal reasons. The pet profile entry used for quick rebooking will be removed.</p>
+
+            <strong>Q: Can I remove my phone number only?</strong>
+            <p class="muted-small">A: Phone number is a core verification field. To remove it we need to process a full account deletion request after verification.</p>
+
+            <strong>Q: How long until deletion completes?</strong>
+            <p class="muted-small">A: Typical processing time is <strong>up to 7 business days</strong>. Complex cases may take longer.</p>
+          </div>
+        </div>
+
+        <hr style="margin:22px 0;border:none;border-top:1px solid #eef2f6">
+
+        <p class="muted-small" style="margin-bottom:6px">Document last updated: <strong>November 14, 2025</strong>.</p>
+        <p class="muted-small">This page is published by Scentemote Technologies Private Limited (MyFellowPet). For our full privacy policy see <a class="link" href="https://www.myfellowpet.com/privacy-policy" target="_blank" rel="noopener">https://www.myfellowpet.com/privacy-policy</a>.</p>
+
+      </div>
+
+      <footer>
+        <div style="font-size:14px;color:var(--muted)">
+          © MyFellowPet — Scentemote Technologies Pvt. Ltd.
+        </div>
+        <div>
+          <a href="mailto:support@myfellowpet.com" class="button" aria-label="Contact support">Contact support</a>
+        </div>
+      </footer>
+    </div>
+  </div>
+</body>
+</html>

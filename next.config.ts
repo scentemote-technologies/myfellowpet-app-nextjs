@@ -17,6 +17,22 @@ const nextConfig = {
         destination: "/privacy-policy.html",
       },
       {
+        source: "/cancellation-refund-policy",
+        destination: "/cancellation-refund-policy.html",
+      },
+      {
+        source: "/contact-us",
+        destination: "/contact-us.html",
+      },
+      {
+        source: "/delete-account",
+        destination: "/delete-account.html",
+      },
+      {
+        source: "/about-us",
+        destination: "/about-us.html",
+      },
+      {
         source: "/boarding/:path*",
         destination: "/", // serve homepage, return 200
       },

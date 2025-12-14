@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>About MyFellowPet</title>
+ <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<style>
+ /* Brand Color: #2CB4B6 (Primary) */
+ body {
+ font-family: 'Segoe UI', Arial, sans-serif;
+ color: #333;
+ background-color: #f4fafa; /* Changed background color to match policy pages */
+ margin: 0;
+ padding: 40px 20px;
+ line-height: 1.7;
+ max-width: 1200px;
+ margin-left: auto;
+ margin-right: auto;
+ }
+
+ /* Added global H1 styling for consistency */
+ h1 {
+ color: #2CB4B6;
+ font-size: 32px; /* Slightly larger for a hero-style heading */
+ margin-bottom: 25px;
+ font-weight: 700;
+ border-bottom: 3px solid #e0f0f0; /* Added bottom border for policy page consistency */
+ padding-bottom: 10px;
+ }
+
+ h2 {
+ color: #2CB4B6;
+ font-size: 24px;
+ margin-top: 50px;
+ margin-bottom: 16px;
+ font-weight: bold;
+ }
+
+ p {
+ margin-bottom: 18px;
+ font-size: 16px;
+ }
+ 
+ /* Added reusable HR style */
+ .divider {
+  margin-top: 40px; 
+  margin-bottom: 20px; 
+  border: none; 
+  border-top: 1px solid #ccc;
+ }
+
+ .card-grid {
+ display: grid;
+ grid-template-columns: repeat(3, 1fr);
+ gap: 24px;
+ margin-top: 40px;
+ }
+
+ .card {
+ border: 2px solid transparent;
+ border-radius: 12px;
+ padding: 20px;
+ background-color: #ffffff; /* Explicitly set card background to white */
+ box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08); /* Stronger shadow to make cards pop */
+ transition: transform 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
+ transform: translateY(0);
+ will-change: transform;
+ }
+
+ .card:hover {
+ transform: translateY(-5px); /* Increased lift on hover */
+ border-color: #2CB4B6;
+ box-shadow: 0 6px 15px rgba(0, 0, 0, 0.12);
+ }
+
+ .card-header {
+ display: flex;
+ align-items: center;
+ gap: 10px;
+ margin-bottom: 10px;
+ }
+
+ .card-icon {
+ font-size: 24px; /* Slightly larger icon */
+ color: #2CB4B6;
+ flex-shrink: 0;
+ }
+
+ .card-title {
+ color: #2CB4B6;
+ font-size: 18px;
+ font-weight: 600;
+ margin: 0;
+ }
+
+ .card-text {
+ color: #555; /* Slightly muted text for better contrast */
+ font-size: 15px;
+ line-height: 1.6;
+ }
+ 
+ /* Added a highlight class for key text */
+ .key-highlight {
+  font-weight: bold;
+  color: #F67B0D; /* Using the accent color for call-outs */
+ }
+ 
+ /* Tablet: 2 cards per row */
+ @media (max-width: 991px) {
+ .card-grid {
+  grid-template-columns: repeat(2, 1fr);
+ }
+ h1 {
+  font-size: 28px;
+ }
+ }
+
+ /* Mobile: horizontal scroll */
+ @media (max-width: 600px) {
+ body {
+  padding: 20px 10px;
+ }
+ h1 {
+  font-size: 24px;
+ }
+ .card-grid {
+  display: flex;
+  overflow-x: auto;
+  gap: 16px;
+  padding-bottom: 8px;
+  -webkit-overflow-scrolling: touch;
+  margin-left: -10px; /* Adjust for padding on mobile */
+  margin-right: -10px;
+  padding-left: 10px;
+ }
+
+ .card {
+  flex: 0 0 280px;
+ }
+ }
+</style>
+</head>
+<body>
+
+<h1>MyFellowPet – Where Every Paw Finds a Caring Hand!</h1>
+
+<p>Founded in 2019, MyFellowPet was built on one simple belief: pet care should be heartfelt, trustworthy, and easy. What started as a small idea has grown into a warm, reliable platform that <b>connects pet parents with genuine, verified pet care providers, ALL IN ONE PLACE!</b></p>
+
+<p>Every interaction on MyFellowPet is guided by trust, compassion, and the shared goal of giving pets the love and care they deserve.</p>
+
+<p>Our community is made up of real pet lovers. People who know the joy of a wagging tail, a gentle nudge, or a happy purr.</p>
+
+<p>We’re more than just a platform! This is a space where hearts connect over paws, where every booking begins with care and ends with peace of mind.</p>
+
+<h2>How It Works</h2>
+
+<p>Booking with MyFellowPet is quick, simple, and built around your convenience. Just pick the service you need, select the dates, and instantly discover trusted service providers near you. Each provider has a verified profile with all the essential details, so you can choose the right fit for your pet with total confidence.</p>
+
+<p>Once you find someone that fits your needs, go ahead and place a booking request. You’ll be having a direct conversation with them to confirm availability, share expectations, and mention any special instructions your pet may require. Once everything’s aligned, the service provider will accept the request, and your booking will be good to go - secure, smooth, and confirmed.</p>
+
+<p>But what if things don’t go as planned? What if the provider doesn’t accept the request or becomes unavailable?</p>
+
+<p>Don’t worry! We’ll step in to help you find someone else quickly. Your pet will never be left alone.</p>
+
+<p><strong>Because for us, your pet’s safety, comfort, and happiness will always come first.</strong></p>
+
+<div class="card-grid">
+<div class="card">
+<div class="card-header">
+ <i class="fas fa-calendar-check card-icon"></i>
+ <h3 class="card-title">Quick and Hassle-Free Booking</h3>
+</div>
+<div class="card-text">Pet care just a few taps away. Search, request, and confirm in minutes.</div>
+</div>
+<div class="card">
+<div class="card-header">
+ <i class="fas fa-user-shield card-icon"></i>
+ <h3 class="card-title">Verified & Screened Providers</h3>
+</div>
+<div class="card-text">Every service partner is screened for quality, experience, and trust to ensure peace of mind.</div>
+</div>
+<div class="card">
+<div class="card-header">
+ <i class="fas fa-eye card-icon"></i>
+ <h3 class="card-title">Know Your Provider</h3>
+</div>
+<div class="card-text">All the details about a provider, from their services and prices to policies, are upfront, so there are no surprises.</div>
+</div>
+<div class="card">
+<div class="card-header">
+ <i class="fas fa-heart card-icon"></i>
+ <h3 class="card-title">Peace of Mind</h3>
+</div>
+<div class="card-text">If plans change or a provider is unavailable, our team helps you find a suitable alternative quickly.</div>
+</div>
+<div class="card">
+<div class="card-header">
+ <i class="fas fa-headset card-icon"></i>
+ <h3 class="card-title">Dedicated Support</h3>
+</div>
+<div class="card-text">We offer trusted support because your pet’s safety is always our top priority.</div>
+</div>
+<div class="card">
+<div class="card-header">
+ <i class="fas fa-star card-icon"></i>
+ <h3 class="card-title">Trusted Reviews</h3>
+</div>
+<div class="card-text">Read honest feedback straight from fellow pet parents to make the best choice.</div>
+</div>
+</div>
+<hr class="divider">
+
+</body>
+</html>
