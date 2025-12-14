@@ -1,0 +1,12 @@
+[
+  {
+    "relation": ["delegate_permission/common.handle_all_urls"],
+    "target": {
+      "namespace": "android_app",
+      "package_name": "com.myfellowpet.app",
+      "sha256_cert_fingerprints": [
+        "09:51:81:79:C3:AD:D4:15:DF:1E:CD:C1:85:80:4C:D9:79:13:C2:A5:AF:0A:07:A8:94:6D:39:38:5E:D7:6D:6C"
+      ]
+    }
+  }
+]
