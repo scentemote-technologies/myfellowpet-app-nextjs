@@ -111,7 +111,7 @@ const ServiceCard: React.FC<ServiceCardProps> = ({ service }) => {
   const runStyle = getRunTypeStyle(runType);
 
   return (
-    <Link href={seoPath} target="_blank" rel="noopener noreferrer">
+   // <Link href={seoPath} target="_blank" rel="noopener noreferrer">
       <div className="group w-[380px] cursor-pointer relative">
         <div
           className="bg-white rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 border-2"
@@ -220,7 +220,7 @@ const ServiceCard: React.FC<ServiceCardProps> = ({ service }) => {
           />
         )}
       </div>
-    </Link>
+ //   </Link>
   );
 };
 
