@@ -13,6 +13,10 @@ const nextConfig = {
   async rewrites() {
     return [
       {
+        source: "/privacy-policy",
+        destination: "/privacy-policy.html",
+      },
+      {
         source: "/boarding/:path*",
         destination: "/", // serve homepage, return 200
       },

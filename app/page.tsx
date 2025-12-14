@@ -74,6 +74,16 @@ export default function LandingPage() {
 
        <div className="hidden md:flex gap-3 items-center">
 
+  {/* Careers Button */}
+  <Link href="https://careers.myfellowpet.com/" target="_blank" rel="noopener noreferrer">
+    <button 
+      className="h-10 px-5 flex items-center rounded-full font-semibold text-white transition-transform hover:scale-105 shadow-md"
+      style={{ backgroundColor: kPrimary }}
+    >
+      Careers
+    </button>
+  </Link>      
+
   {/* Partner Button */}
   <Link href="https://partner.myfellowpet.com/" target="_blank" rel="noopener noreferrer">
     <button 
