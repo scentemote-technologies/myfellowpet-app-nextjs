@@ -1,12 +1,10 @@
 'use client';
 
 import React from 'react';
-import Footer from "@/app/components/Footer";
 import Image from 'next/image';
 import Link from 'next/link';
 import { Poppins } from 'next/font/google'; // Import Google Font
 import { FaWhatsapp, FaUserCircle, FaSearch } from 'react-icons/fa';
-import useBoardingServices from '@/lib/useBoardingServices'; 
 import ServiceCard from './components/ServiceCard'; // Assuming ServiceCard is in app/components
 // Add these imports to your existing icon imports at the top
 import { FaInstagram, FaAngleDown, FaAngleUp, FaEnvelope } from 'react-icons/fa';
@@ -18,6 +16,8 @@ import {
   MdSchool, 
   MdFavorite 
 } from 'react-icons/md';
+import useBoardingServices from '../lib/useBoardingServices';
+import Footer from './components/Footer';
 
 // --- FONT CONFIGURATION ---
 const poppins = Poppins({ 

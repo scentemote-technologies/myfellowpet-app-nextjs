@@ -1,4 +1,4 @@
-import { getAdminDB } from "@/lib/firebaseAdmin";
+import { getAdminDB } from "../lib/firebaseAdmin";
 
 export default async function sitemap() {
   const adminDB = await getAdminDB();

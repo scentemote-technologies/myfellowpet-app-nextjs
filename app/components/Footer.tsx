@@ -2,9 +2,9 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import { db } from "@/lib/firebase";
 import { doc, getDoc } from "firebase/firestore";
 import { FaInstagram, FaWhatsapp, FaEnvelope } from "react-icons/fa";
+import { db } from "../../lib/firebase";
 
 export default function Footer() {
   const [data, setData] = useState<any>(null);
