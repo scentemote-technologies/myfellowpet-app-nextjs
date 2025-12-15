@@ -33,6 +33,10 @@ const nextConfig = {
         destination: "/about-us.html",
       },
       {
+        source: "/terms_of_service",
+        destination: "/terms_of_service.html",
+      },
+      {
         source: "/boarding/:path*",
         destination: "/", // serve homepage, return 200
       },
