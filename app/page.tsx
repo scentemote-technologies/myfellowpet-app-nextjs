@@ -102,7 +102,15 @@ export default function LandingPage() {
           />
         </div>
 
-        <div className="hidden md:flex gap-6 items-center">
+        <div className="hidden md:flex gap-10 items-center">
+           <Link
+            href="http://myfellowpet.com/home-boarder-onboarding/overview/"
+            target="_blank"
+            className="h-10 flex items-center font-semibold text-gray-900 hover:text-gray-600"
+          >
+            Docs
+          </Link>
+
           <Link
             href="https://careers.myfellowpet.com/"
             target="_blank"
@@ -119,14 +127,12 @@ export default function LandingPage() {
             Partner with us
           </Link>
 
-          <Link href={APP_STORE_URL} target="_blank">
             <Image
               src="/assets/AppStoreLogo.png"
               alt="App Store"
               width={110}
               height={32}
             />
-          </Link>
 
           <Link href={PLAY_STORE_URL} target="_blank">
             <Image

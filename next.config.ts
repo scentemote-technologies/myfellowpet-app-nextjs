@@ -36,6 +36,16 @@ const nextConfig = {
         source: "/terms_of_service",
         destination: "/terms_of_service.html",
       },
+  
+      {
+        source: "/home-boarder-onboarding",
+        destination: "/home-boarder-onboarding.html",
+      },
+      {
+  source: "/home-boarder-onboarding/:path*",
+  destination: "/home-boarder-onboarding.html",
+},
+      
       {
         source: "/boarding/:path*",
         destination: "/", // serve homepage, return 200
