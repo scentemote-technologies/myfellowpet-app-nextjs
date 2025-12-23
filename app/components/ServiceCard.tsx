@@ -68,7 +68,7 @@ const ServiceCard: React.FC<ServiceCardProps> = ({ service }) => {
     service_id,
     shopName,
     area_name,
-    runType = "",
+    type,
     shop_image,
     pets = [],
     distance,
@@ -108,7 +108,7 @@ const ServiceCard: React.FC<ServiceCardProps> = ({ service }) => {
 
   const seoPath = `/${country}/${serviceType}/${stateSlug}/${districtSlug}/${areaSlug}/${finalSlug}`;
 
-  const runStyle = getRunTypeStyle(runType);
+  const runStyle = getRunTypeStyle(type);
 
   return (
    // <Link href={seoPath} target="_blank" rel="noopener noreferrer">
