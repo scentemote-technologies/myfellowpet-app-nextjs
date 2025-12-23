@@ -120,11 +120,7 @@ export default function BlogsClient() {
                 {blog.author?.name && (
                   <span>By {blog.author.name}</span>
                 )}
-                {blog.published_at && (
-                  <span>
-                    {new Date(blog.published_at).toLocaleDateString()}
-                  </span>
-                )}
+                
               </div>
             </div>
           </Link>
