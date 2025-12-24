@@ -253,7 +253,7 @@ useEffect(() => {
       {/* Bordered links */}
       {[
         {
-          label: 'Blog',
+          label: 'Blogs',
           href: 'http://myfellowpet.com/blogs',
         },
         {
@@ -321,8 +321,8 @@ useEffect(() => {
 
       {[
         {
-          label: 'Docs',
-          href: 'http://myfellowpet.com/home-boarder-onboarding/overview/',
+          label: 'Blogs',
+          href: 'https://myfellowpet.com/blogs',
         },
         {
           label: 'Careers',
