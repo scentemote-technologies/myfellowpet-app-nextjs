@@ -2,13 +2,13 @@
 import React from "react";
 import Image from "next/image";
 import Link from "next/link";
-
+// At the top of ServiceCard.tsx
+import { FaStar, FaRegStar } from 'react-icons/fa'; // Add FaRegStar here
 
 import {
   FaHeart,
   FaCertificate,
   FaCheckCircle,
-  FaStar,
   FaMapMarkerAlt,
   FaTag,
 } from "react-icons/fa";
@@ -66,10 +66,10 @@ const truncateText = (text: string, limit: number): string =>
 const ServiceCard: React.FC<ServiceCardProps> = ({ service }) => {
   const {
     service_id,
-    shopName,
+    shop_name,
     area_name,
     type,
-    shop_image,
+    shop_logo,
     pets = [],
     distance,
     isOfferActive,
@@ -111,7 +111,7 @@ const ServiceCard: React.FC<ServiceCardProps> = ({ service }) => {
   const runStyle = getRunTypeStyle(type);
 
   return (
-   // <Link href={seoPath} target="_blank" rel="noopener noreferrer">
+    <Link href={seoPath} target="_blank" rel="noopener noreferrer">
       <div className="group w-[380px] cursor-pointer relative">
         <div
           className="bg-white rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 border-2"
@@ -121,8 +121,8 @@ const ServiceCard: React.FC<ServiceCardProps> = ({ service }) => {
             {/* LEFT: IMAGE */}
             <div className="relative w-28 h-36 flex-shrink-0">
               <Image
-                src={shop_image || "/default-shop.png"}
-                alt={shopName}
+                src={shop_logo || "/default-shop.png"}
+                alt={shop_name}
                 width={112}
                 height={144}
                 style={{ objectFit: "cover" }}
@@ -147,30 +147,35 @@ const ServiceCard: React.FC<ServiceCardProps> = ({ service }) => {
             <div className="flex-1 ml-4 flex flex-col justify-between h-36">
               <div>
                 <h3 className="text-base font-bold text-gray-800 line-clamp-2">
-                  {shopName}
+                  {shop_name}
                 </h3>
-
-                {/* RATING */}
-                <div className="flex items-center text-amber-400 text-sm my-1">
-                  {loading ? (
-                    <span className="text-xs text-gray-400">Loading rating...</span>
-                  ) : count > 0 ? (
-                    <>
-                      {[...Array(5)].map((_, i) => (
-                        <FaStar
-                          key={i}
-                          size={12}
-                          className={i < roundedAvg ? "text-amber-400" : "text-gray-300"}
-                        />
-                      ))}
-                      <span className="ml-1 text-xs text-gray-500">
-                        {avg.toFixed(1)} ({count})
-                      </span>
-                    </>
-                  ) : (
-                    <span className="text-xs text-gray-400">No ratings yet</span>
-                  )}
-                </div>
+{/* RATING */}
+<div className="flex items-center text-amber-400 text-sm my-1">
+  {loading ? (
+    <span className="text-xs text-gray-400">Loading rating...</span>
+  ) : (
+    <>
+      <div className="flex items-center gap-0.5">
+        {[...Array(5)].map((_, i) => {
+          const isFilled = count > 0 && i < roundedAvg;
+          
+          return isFilled ? (
+            <FaStar key={i} size={12} className="text-amber-400" />
+          ) : (
+            <FaRegStar key={i} size={12} className="text-amber-400" />
+          );
+        })}
+      </div>
+      
+      {/* Only show numeric stats if ratings exist */}
+      {count > 0 && (
+        <span className="ml-1.5 text-xs text-gray-500 font-medium">
+          {avg.toFixed(1)} ({count})
+        </span>
+      )}
+    </>
+  )}
+</div>
 
                 {/* PRICE + LOCATION */}
                 <div className="text-sm font-semibold text-gray-800">

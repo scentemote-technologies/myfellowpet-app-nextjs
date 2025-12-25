@@ -1,4 +1,3 @@
-// lib/useBoardingServices.tsx
 "use client";
 
 import { useState, useEffect, useMemo } from "react";
@@ -28,6 +27,7 @@ export interface ServiceCardData extends DocumentData {
   isAdminApproved?: boolean;
   min_price: number;
   shop_location?: GeoPointLike;
+  location_geopoint?: GeoPointLike; // Added to match Flutter payload
   other_branches?: string[];
   shop_name?: string;
   area_name?: string;
@@ -42,17 +42,12 @@ interface UserLocation {
   longitude: number;
 }
 
-// -------------------------
-// HOOK
-// -------------------------
-const useBoardingServices = () => {
+const useBoardingServices = (selectedCity?: string | null) => {
   const [services, setServices] = useState<ServiceCardData[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [userLocation, setUserLocation] = useState<UserLocation | null>(null);
 
-  // -----------------------------------------------------
   // 1️⃣ GET USER LOCATION
-  // -----------------------------------------------------
   useEffect(() => {
     // Default fallback (Bengaluru center)
     setUserLocation({ latitude: 12.9716, longitude: 77.5946 });
@@ -72,15 +67,37 @@ const useBoardingServices = () => {
     }
   }, []);
 
-  // -----------------------------------------------------
   // 2️⃣ LIVE FIREBASE SUBSCRIPTION
-  // -----------------------------------------------------
   useEffect(() => {
-    const q = query(
-      collection(db, "users-sp-boarding"),
-      where("display", "==", true),
-      limit(10)
-    );
+    setLoading(true);
+    let q;
+    const collectionRef = collection(db, "users-sp-boarding");
+
+    if (selectedCity) {
+      const cityVariations = [selectedCity];
+      
+      // Normalize Bangalore/Bengaluru variations
+      if (selectedCity === 'Bengaluru' || selectedCity === 'Bangalore') {
+        cityVariations.push('Bangalore', 'Bengaluru', 'Bangalore Division', 'Bengaluru Urban');
+      } 
+      // Add variations for Hyderabad
+      else if (selectedCity === 'Hyderabad') {
+        cityVariations.push('Hyderabad City', 'Telangana', 'Hyderabad Division');
+      }
+
+      q = query(
+        collectionRef,
+        where("display", "==", true),
+        where("district", "in", cityVariations),
+        where("type", "==", "Home Run")
+      );
+    } else {
+      q = query(
+        collectionRef,
+        where("display", "==", true),
+        limit(10)
+      );
+    }
 
     const unsubscribe = onSnapshot(
       q,
@@ -89,9 +106,6 @@ const useBoardingServices = () => {
           const data = doc.data();
           const serviceId = doc.id;
 
-          // -------------------------------
-          // Extract min_price properly
-          // -------------------------------
           const standardPricesMap =
             (data["pre_calculated_standard_prices"] as Record<
               string,
@@ -99,21 +113,18 @@ const useBoardingServices = () => {
             >) || {};
 
           const allPrices: number[] = [];
-
           Object.values(standardPricesMap).forEach((petTypeMap) => {
             allPrices.push(...(Object.values(petTypeMap) as number[]));
           });
 
-          const minPrice =
-            allPrices.length > 0 ? Math.min(...allPrices) : 0;
+          const minPrice = allPrices.length > 0 ? Math.min(...allPrices) : 0;
 
           return {
             ...(data as ServiceCardData),
             service_id: serviceId,
             shopName: data.shop_name || "Unknown Shop",
             areaName: data.area_name || "Unknown Area",
-            shop_image:
-              data.shop_logo || "/assets/pet_card_placeholder.jpg",
+            shop_image: data.shop_logo || "/assets/pet_card_placeholder.jpg",
             min_price: minPrice,
           };
         });
@@ -128,11 +139,9 @@ const useBoardingServices = () => {
     );
 
     return () => unsubscribe();
-  }, []);
+  }, [selectedCity]);
 
-  // -----------------------------------------------------
   // 3️⃣ PROCESS + GROUP + SORT BY DISTANCE
-  // -----------------------------------------------------
   const finalCards = useMemo(() => {
     if (loading || !userLocation) return [];
 
@@ -142,28 +151,25 @@ const useBoardingServices = () => {
       const shopName = branch.shopName;
       let distanceKm = Infinity;
 
-      if (
-        branch.shop_location &&
-        typeof branch.shop_location.latitude === "number"
-      ) {
+      // 🔥 FIX: Check BOTH shop_location AND location_geopoint
+      const loc = branch.shop_location || branch.location_geopoint;
+
+      if (loc && typeof loc.latitude === "number") {
         distanceKm =
           getDistance(userLocation, {
-            latitude: branch.shop_location.latitude,
-            longitude: branch.shop_location.longitude,
+            latitude: loc.latitude,
+            longitude: loc.longitude,
           }) / 1000;
       }
 
       branch.distance = distanceKm;
-
       (grouped[shopName] ??= []).push(branch);
     });
 
-    // Pick closest branch, and attach other branches
     const finalList: ServiceCardData[] = [];
 
     Object.values(grouped).forEach((branches) => {
       branches.sort((a, b) => a.distance - b.distance);
-
       const closest = branches[0];
       const others = branches.slice(1).map((b) => b.service_id);
 

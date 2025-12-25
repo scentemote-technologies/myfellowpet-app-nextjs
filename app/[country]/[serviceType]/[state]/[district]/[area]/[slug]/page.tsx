@@ -3,6 +3,7 @@ import Image from "next/image";
 
 import type { Metadata } from "next";
 import { getServiceBySlug } from "../../../../../../../lib/getServiceBySlug";
+import Header from "../../../../../../components/Header";
 
 
 
@@ -201,6 +202,7 @@ export default async function ServicePage(
 
 
   return (
+
 
     <>
 
@@ -541,6 +543,8 @@ export default async function ServicePage(
       {/* PAGE UI */}
 
       {/* ========================================================= */}
+             <Header /> 
+
 
       <main className="min-h-screen max-w-4xl mx-auto p-6">
 

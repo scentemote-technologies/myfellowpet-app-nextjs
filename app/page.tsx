@@ -1,4 +1,7 @@
 'use client';
+
+import { useRouter } from 'next/navigation';
+
 import {
   MdContentCut,
   MdHome,
@@ -38,6 +41,7 @@ import {
 import ServiceCard from './components/ServiceCard';
 import Footer from './components/Footer';
 import useBoardingServices from '../lib/useBoardingServices';
+import Header from './components/Header';
 
 // ---------------- FONT CONFIGURATION ----------------
 const poppins = Poppins({
@@ -95,16 +99,72 @@ function useCountUp(target: number, duration = 1200) {
 // ===================================================
 
 export default function LandingPage() {
-  const { cards: sortedCards, loading } = useBoardingServices();
+  const router = useRouter(); // Initialize router
+// 1. Initialize with 'Bengaluru' as the default fallback
+  const [selectedCity, setSelectedCity] = useState('Bengaluru');
+  const [isDetecting, setIsDetecting] = useState(false);
+
+  useEffect(() => {
+    if ("geolocation" in navigator) {
+      setIsDetecting(true);
+      navigator.geolocation.getCurrentPosition(
+        async (position) => {
+          const { latitude, longitude } = position.coords;
+          try {
+            // 2. Use a Reverse Geocoding API
+            // Using OpenStreetMap (Free, no API key required for low volume)
+            const response = await fetch(
+              `https://nominatim.openstreetmap.org/reverse?format=json&lat=${latitude}&lon=${longitude}&zoom=10`
+            );
+            const data = await response.json();
+            
+            // 3. Extract City/District
+            // Nominatim returns city, town, or residential district in 'address'
+            const detectedCity = data.address.city || data.address.town || data.address.state_district;
+            
+            if (detectedCity) {
+              // Clean up strings like "Bengaluru Urban" to just "Bengaluru" if needed
+              const cleanCity = detectedCity.replace(' District', '').replace(' Division', '');
+              setSelectedCity(cleanCity);
+            }
+          } catch (error) {
+            console.error("Error detecting city:", error);
+          } finally {
+            setIsDetecting(false);
+          }
+        },
+        (error) => {
+          console.warn("Location permission denied, using default.");
+          setIsDetecting(false);
+        }
+      );
+    }
+  }, []);  const { cards: sortedCards, loading } = useBoardingServices();
   const [showAllBoardingCards, setShowAllBoardingCards] = useState(false);
   const [footerData, setFooterData] = useState<any>(null);
   const [partnerVideoUrl, setPartnerVideoUrl] = useState<string | null>(null);
   const [menuOpen, setMenuOpen] = useState(false);
   const [partnerBgImages, setPartnerBgImages] = useState<string[]>([]);
   const [stats, setStats] = useState<any>(null);
-const [selectedService, setSelectedService] = useState('Grooming');
+const [selectedService, setSelectedService] = useState('Boarding');
 const [blogs, setBlogs] = useState<any[]>([]);
 const blogScrollRef = React.useRef<HTMLDivElement>(null);
+const handleSearch = () => {
+    // Map service names to your URL slugs
+    const serviceMap: Record<string, string> = {
+      'Boarding': 'boarding',
+      'Grooming': 'grooming',
+      'Shops': 'store',
+      'Training': 'training',
+      'Sitting': 'sitting',
+      'Veterinary': 'vet',
+    };
+
+    const slug = serviceMap[selectedService] || 'boarding';
+    
+    // Redirect to the service page with city as a query param
+    router.push(`/services/${slug}?city=${selectedCity}`);
+  };
 
 
 
@@ -231,138 +291,7 @@ useEffect(() => {
     <div
       className={`min-h-screen bg-white text-gray-800 relative ${poppins.className}`}
     >
-     {/* ================= HEADER ================= */}
-<header className="sticky top-0 z-50 bg-white border-b">
-  <div className="max-w-7xl mx-auto flex items-center justify-between px-6 py-4">
-
-    {/* Logo */}
-    <Link href="/" className="flex items-center">
-      <Image
-        src="/assets/myfellowpet_web_logo.jpg"
-        alt="MyFellowPet"
-        width={200}
-        height={60}
-        className="cursor-pointer"
-        priority
-      />
-    </Link>
-
-    {/* Desktop Nav */}
-    <div className="hidden md:flex items-center gap-6">
-
-      {/* Bordered links */}
-      {[
-        {
-          label: 'Blogs',
-          href: 'http://myfellowpet.com/blogs',
-        },
-        {
-          label: 'Careers',
-          href: 'https://careers.myfellowpet.com/',
-        },
-        {
-          label: 'Partner with us',
-          href: 'https://partner.myfellowpet.com/',
-        },
-      ].map((item) => (
-        <Link
-          key={item.label}
-          href={item.href}
-          target="_blank"
-          className="px-4 py-2 border border-black rounded-full text-sm font-medium hover:bg-black hover:text-white transition"
-        >
-          {item.label}
-        </Link>
-      ))}
-
-      {/* App Download Pill */}
-      <div className="flex items-center gap-3 bg-orange-50 border border-orange-200 rounded-full px-4 py-2">
-        <span className="text-sm font-medium text-gray-800">
-          Love your pet?
-          <span className="ml-1 font-semibold text-orange-600">
-            Download our app
-          </span>
-        </span>
-
-        <Image
-          src="/assets/AppStoreLogo.png"
-          alt="App Store"
-          width={90}
-          height={26}
-        />
-
-        <Link href={PLAY_STORE_URL} target="_blank">
-          <Image
-            src="/assets/GooglePlayLogo.png"
-            alt="Google Play"
-            width={100}
-            height={26}
-          />
-        </Link>
-      </div>
-
-      <button className="text-gray-600 hover:text-gray-900">
-        <FaUserCircle size={30} />
-      </button>
-    </div>
-
-    {/* Mobile Menu Button */}
-    <button
-      className="md:hidden text-gray-800"
-      onClick={() => setMenuOpen(!menuOpen)}
-    >
-      {menuOpen ? <FaAngleUp size={28} /> : <FaAngleDown size={28} />}
-    </button>
-  </div>
-
-  {/* Mobile Menu */}
-  {menuOpen && (
-    <div className="md:hidden px-6 pb-6 space-y-4 bg-white border-t">
-
-      {[
-        {
-          label: 'Blogs',
-          href: 'https://myfellowpet.com/blogs',
-        },
-        {
-          label: 'Careers',
-          href: 'https://careers.myfellowpet.com/',
-        },
-        {
-          label: 'Partner with us',
-          href: 'https://partner.myfellowpet.com/',
-        },
-      ].map((item) => (
-        <Link
-          key={item.label}
-          href={item.href}
-          target="_blank"
-          className="block w-full text-center py-3 border border-black rounded-full font-medium"
-          onClick={() => setMenuOpen(false)}
-        >
-          {item.label}
-        </Link>
-      ))}
-
-      <div className="flex justify-center gap-4 pt-2">
-        <Image
-          src="/assets/AppStoreLogo.png"
-          alt="App Store"
-          width={100}
-          height={28}
-        />
-        <Link href={PLAY_STORE_URL} target="_blank">
-          <Image
-            src="/assets/GooglePlayLogo.png"
-            alt="Google Play"
-            width={110}
-            height={28}
-          />
-        </Link>
-      </div>
-    </div>
-  )}
-</header>
+   <Header /> {/* Call the Header here */}
 
 
 
@@ -409,8 +338,8 @@ useEffect(() => {
   <div className="flex flex-wrap gap-4">
 
     {[
-      { name: 'Grooming', icon: MdContentCut },
       { name: 'Boarding', icon: MdHome },
+      { name: 'Grooming', icon: MdContentCut },
       { name: 'Shops', icon: MdShoppingBag },
       { name: 'Training', icon: MdSchool },
       { name: 'Sitting', icon: MdPets },
@@ -440,29 +369,43 @@ useEffect(() => {
   {/* ================= FILTER ROW ================= */}
 <div className="grid grid-cols-1 md:grid-cols-2 gap-4 items-stretch">
 
-    {/* City */}
-    <div className="border rounded-xl px-4 py-3 flex justify-between items-center">
-      <div>
-        <p className="text-xs text-gray-500">My City</p>
-        <p className="text-lg font-semibold text-gray-900">
-          Bengaluru
-        </p>
-      </div>
-
-      <button className="text-gray-400 hover:text-gray-700 text-xl">
-        ×
-      </button>
+  {/* City Selector */}
+  <div className="border rounded-xl px-4 py-3 flex justify-between items-center bg-gray-50">
+    <div className="flex-1">
+      <p className="text-xs text-gray-500">My City</p>
+      <select 
+        className="w-full bg-transparent text-lg font-semibold text-gray-900 outline-none cursor-pointer appearance-none"
+        value={selectedCity}
+        onChange={(e) => setSelectedCity(e.target.value)}
+      >
+        {/* Dynamic City List from Stats if available, otherwise fallback */}
+        {stats?.cities_covered?.names ? (
+          stats.cities_covered.names.map((city: string) => (
+            <option key={city} value={city}>{city}</option>
+          ))
+       ) : null}
+      </select>
     </div>
 
-    {/* Search */}
-    <button
-      className="flex items-center justify-center gap-2 text-white font-semibold rounded-xl h-full px-8"
-      style={{ backgroundColor: kAccent }}
+    {/* Reset City Button */}
+    <button 
+      onClick={() => setSelectedCity('Bengaluru')}
+      className="text-gray-400 hover:text-gray-700 text-xl ml-2"
     >
-      <FaSearch size={16} />
-      Search
+      ×
     </button>
   </div>
+
+  {/* Search Button */}
+  <button
+    onClick={handleSearch} // This triggers your router.push logic
+    className="flex items-center justify-center gap-2 text-white font-semibold rounded-xl h-full py-4 md:py-0 px-8 hover:opacity-90 transition shadow-lg active:scale-95"
+    style={{ backgroundColor: kAccent }}
+  >
+    <FaSearch size={16} />
+    Search
+  </button>
+</div>
 </div>
 
 
