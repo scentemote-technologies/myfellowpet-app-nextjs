@@ -2,9 +2,8 @@
 import React from "react";
 import Image from "next/image";
 import Link from "next/link";
-// At the top of ServiceCard.tsx
-import { FaStar, FaRegStar } from 'react-icons/fa'; // Add FaRegStar here
 
+import { FaStar, FaRegStar } from "react-icons/fa";
 import {
   FaHeart,
   FaCertificate,
@@ -12,6 +11,7 @@ import {
   FaMapMarkerAlt,
   FaTag,
 } from "react-icons/fa";
+
 import { ServiceCardData } from "../../lib/useBoardingServices";
 import { useRatingStats } from "../../lib/useRatingStats";
 
@@ -38,7 +38,7 @@ const getRunTypeStyle = (type: string) => {
 const PetChip: React.FC<{ pet: string }> = ({ pet }) => (
   <div
     className="px-2 py-1 text-xs font-semibold rounded-lg"
-    style={{ color: kPrimary, backgroundColor: "rgba(44, 180, 182, 0.1)" }}
+    style={{ color: kPrimary, backgroundColor: "rgba(44,180,182,0.1)" }}
   >
     {pet}
   </div>
@@ -64,46 +64,74 @@ const truncateText = (text: string, limit: number): string =>
 // ---------------------------------------------------------------
 
 const ServiceCard: React.FC<ServiceCardProps> = ({ service }) => {
+  /**
+   * 🔥 ALL FIELDS FROM FIRESTORE — DESTRUCTURED
+   * (Even if not used yet, they are now available)
+   */
   const {
     service_id,
     shop_name,
-    area_name,
-    type,
     shop_logo,
+    area_name,
+    district,
+    state,
+    type,
     pets = [],
-    distance,
+    features = [],
+    description,
+    open_time,
+    close_time,
+    created_at,
+
+    image_urls = [],
+    other_branches = [],
+
+    location_geopoint,
+    shop_location,
+
+    max_pets_allowed,
+    max_pets_allowed_per_hour,
+
     isOfferActive,
+    mfp_certified,
     isCertified,
     isAdminApproved,
+
+    pre_calculated_offer_prices,
+    pre_calculated_standard_prices,
+
+    refund_policy,
+
+    distance,
     min_price = 0,
+
     seo_slug,
+    district_slug,
   } = service;
 
   // Ratings
   const { avg, count, loading } = useRatingStats(service_id);
   const roundedAvg = Math.round(avg);
 
-  // URL Structure
+  // ---------------------------------------------------------------
+  // SEO PATH (UNCHANGED)
+  // ---------------------------------------------------------------
+
   const country = "india";
   const serviceType = "boarding";
+
   const slugify = (str: string) =>
-  str
-    ?.toLowerCase()
-    .trim()
-    .replace(/[^a-z0-9]+/g, "-")        // remove special chars safely
-    .replace(/^-+|-+$/g, "");           // trim hyphens
+    str
+      ?.toLowerCase()
+      .trim()
+      .replace(/[^a-z0-9]+/g, "-")
+      .replace(/^-+|-+$/g, "");
 
-
-  const stateSlug = slugify(service.state || "unknown");
-
-  const districtSlug =
-  service.district_slug || slugify(service.district || "unknown");
-
-
+  const stateSlug = slugify(state || "unknown");
+  const districtSlug = district_slug || slugify(district || "unknown");
   const areaSlug = slugify(area_name || "unknown");
 
-
-  // 🔥 ALWAYS USE FIRESTORE SEO SLUG — NEVER REGENERATE!
+  // 🔥 ALWAYS USE FIRESTORE SEO SLUG
   const finalSlug = seo_slug || "unknown";
 
   const seoPath = `/${country}/${serviceType}/${stateSlug}/${districtSlug}/${areaSlug}/${finalSlug}`;
@@ -115,21 +143,20 @@ const ServiceCard: React.FC<ServiceCardProps> = ({ service }) => {
       <div className="group w-[380px] cursor-pointer relative">
         <div
           className="bg-white rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 border-2"
-          style={{ borderColor: "rgba(0, 0, 0, 0.87)" }}
+          style={{ borderColor: "rgba(0,0,0,0.87)" }}
         >
           <div className="p-3 flex">
-            {/* LEFT: IMAGE */}
+            {/* LEFT IMAGE */}
             <div className="relative w-28 h-36 flex-shrink-0">
               <Image
                 src={shop_logo || "/default-shop.png"}
                 alt={shop_name}
                 width={112}
                 height={144}
-                style={{ objectFit: "cover" }}
-                className="rounded-lg"
+                className="rounded-lg object-cover"
               />
 
-              {/* RUN TYPE LABEL */}
+              {/* RUN TYPE */}
               <div
                 className="absolute bottom-0 left-0 right-0 h-5 text-center text-xs font-semibold text-white rounded-b-lg flex items-center justify-center"
                 style={{ backgroundColor: runStyle.color }}
@@ -143,39 +170,39 @@ const ServiceCard: React.FC<ServiceCardProps> = ({ service }) => {
               </button>
             </div>
 
-            {/* RIGHT SIDE */}
+            {/* RIGHT */}
             <div className="flex-1 ml-4 flex flex-col justify-between h-36">
               <div>
                 <h3 className="text-base font-bold text-gray-800 line-clamp-2">
                   {shop_name}
                 </h3>
-{/* RATING */}
-<div className="flex items-center text-amber-400 text-sm my-1">
-  {loading ? (
-    <span className="text-xs text-gray-400">Loading rating...</span>
-  ) : (
-    <>
-      <div className="flex items-center gap-0.5">
-        {[...Array(5)].map((_, i) => {
-          const isFilled = count > 0 && i < roundedAvg;
-          
-          return isFilled ? (
-            <FaStar key={i} size={12} className="text-amber-400" />
-          ) : (
-            <FaRegStar key={i} size={12} className="text-amber-400" />
-          );
-        })}
-      </div>
-      
-      {/* Only show numeric stats if ratings exist */}
-      {count > 0 && (
-        <span className="ml-1.5 text-xs text-gray-500 font-medium">
-          {avg.toFixed(1)} ({count})
-        </span>
-      )}
-    </>
-  )}
-</div>
+
+                {/* RATING */}
+                <div className="flex items-center text-amber-400 text-sm my-1">
+                  {loading ? (
+                    <span className="text-xs text-gray-400">
+                      Loading rating...
+                    </span>
+                  ) : (
+                    <>
+                      <div className="flex items-center gap-0.5">
+                        {[...Array(5)].map((_, i) =>
+                          count > 0 && i < roundedAvg ? (
+                            <FaStar key={i} size={12} />
+                          ) : (
+                            <FaRegStar key={i} size={12} />
+                          )
+                        )}
+                      </div>
+
+                      {count > 0 && (
+                        <span className="ml-1.5 text-xs text-gray-500 font-medium">
+                          {avg.toFixed(1)} ({count})
+                        </span>
+                      )}
+                    </>
+                  )}
+                </div>
 
                 {/* PRICE + LOCATION */}
                 <div className="text-sm font-semibold text-gray-800">
@@ -191,7 +218,7 @@ const ServiceCard: React.FC<ServiceCardProps> = ({ service }) => {
                 </div>
               </div>
 
-              {/* PET CHIPS + DISTANCE */}
+              {/* PETS + DISTANCE */}
               <div>
                 <div className="flex space-x-1.5 overflow-x-auto my-1">
                   {pets.slice(0, 3).map((pet) => (
@@ -206,11 +233,13 @@ const ServiceCard: React.FC<ServiceCardProps> = ({ service }) => {
             </div>
           </div>
 
-          {/* OFFER BANNER */}
+          {/* OFFER */}
           {isOfferActive && (
             <div
               className="w-full text-center py-1.5 text-white font-bold text-xs rounded-b-xl"
-              style={{ background: `linear-gradient(to right, ${kAccent}, #D96D0B)` }}
+              style={{
+                background: `linear-gradient(to right, ${kAccent}, #D96D0B)`,
+              }}
             >
               SPECIAL OFFER
             </div>
@@ -218,10 +247,10 @@ const ServiceCard: React.FC<ServiceCardProps> = ({ service }) => {
         </div>
 
         {/* BADGES */}
-        {(isCertified || isAdminApproved) && (
+        {(isCertified || isAdminApproved || mfp_certified) && (
           <IconBadge
-            icon={isCertified ? FaCertificate : FaCheckCircle}
-            color={isCertified ? kAccent : kPrimary}
+            icon={isCertified || mfp_certified ? FaCertificate : FaCheckCircle}
+            color={isCertified || mfp_certified ? kAccent : kPrimary}
           />
         )}
       </div>
