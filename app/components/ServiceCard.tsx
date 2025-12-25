@@ -225,7 +225,7 @@ const ServiceCard: React.FC<ServiceCardProps> = ({ service }) => {
           />
         )}
       </div>
- //   </Link>
+    </Link>
   );
 };
 
