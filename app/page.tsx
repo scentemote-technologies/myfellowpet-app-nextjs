@@ -93,8 +93,18 @@ function useCountUp(target: number, duration = 1200) {
   return count;
 }
 
+// Helper to manage cookies
+const setCookie = (name: string, value: string, days: number) => {
+  const expires = new Date(Date.now() + days * 864e5).toUTCString();
+  document.cookie = `${name}=${encodeURIComponent(value)}; expires=${expires}; path=/`;
+};
 
-
+const getCookie = (name: string) => {
+  return document.cookie.split('; ').reduce((r, v) => {
+    const parts = v.split('=');
+    return parts[0] === name ? decodeURIComponent(parts[1]) : r;
+  }, '');
+};
 
 // ===================================================
 
@@ -102,52 +112,72 @@ export default function LandingPage() {
   const router = useRouter(); // Initialize router
 // 1. Initialize with 'Bengaluru' as the default fallback
   const [selectedCity, setSelectedCity] = useState('Bengaluru');
-  const [isDetecting, setIsDetecting] = useState(false);
+  const [isDetecting, setIsDetecting] = useState(true);
   const [locationError, setLocationError] = useState(false); // New state
   // Define the detection logic as a standalone function
-  const detectLocation = () => {
+ const detectLocation = (force = false) => {
+    // 1. Check for saved cookie unless 'force' (Retry) is clicked
+    const savedCity = getCookie('user_city');
+    if (savedCity && !force) {
+      setSelectedCity(savedCity);
+      setIsDetecting(false);
+      return;
+    }
+
     if ("geolocation" in navigator) {
       setIsDetecting(true);
-      setLocationError(false); // Reset error state on retry
+      setLocationError(false);
       
       navigator.geolocation.getCurrentPosition(
         async (position) => {
           const { latitude, longitude } = position.coords;
           try {
-            // Use reverse geocoding
+            // Optimization: Set a timeout for the Geocoding API fetch
+            const controller = new AbortController();
+            const timeoutId = setTimeout(() => controller.abort(), 5000); // 5s limit
+
             const response = await fetch(
-              `https://nominatim.openstreetmap.org/reverse?format=json&lat=${latitude}&lon=${longitude}&zoom=10`
+              `https://nominatim.openstreetmap.org/reverse?format=json&lat=${latitude}&lon=${longitude}&zoom=10`,
+              { signal: controller.signal }
             );
+            clearTimeout(timeoutId);
+            
             const data = await response.json();
             const detectedCity = data.address.city || data.address.town || data.address.state_district;
             
             if (detectedCity) {
               const cleanCity = detectedCity.replace(' District', '').replace(' Division', '');
               setSelectedCity(cleanCity);
+              setCookie('user_city', cleanCity, 30); // Save for 30 days
             }
           } catch (error) {
-            console.error("Error detecting city:", error);
+            console.error("Location Fetch Timeout or Error:", error);
+            // Default to Bengaluru silently on API failure
           } finally {
             setIsDetecting(false);
           }
         },
         (error) => {
-          console.warn("Location permission denied or GPS off.");
           setIsDetecting(false);
-          setLocationError(true); 
-          // Keep Bengaluru as default
+          setLocationError(true);
         },
-        { timeout: 10000, enableHighAccuracy: true }
+        { timeout: 6000 } // Don't let the GPS search for more than 6s
       );
     } else {
+      setIsDetecting(false);
       setLocationError(true);
     }
   };
 
-  // Run on initial mount
   useEffect(() => {
     detectLocation();
   }, []);
+
+  // Update cookie whenever user manually changes the city
+  const handleCityChange = (city: string) => {
+    setSelectedCity(city);
+    setCookie('user_city', city, 30);
+  };
 
   useEffect(() => {
     if ("geolocation" in navigator) {
@@ -415,90 +445,49 @@ useEffect(() => {
   {/* ================= FILTER ROW ================= */}
 <div className="grid grid-cols-1 md:grid-cols-2 gap-4 items-stretch mb-6">
 
-  {/* City Selector Container */}
+  {/* City Selector */}
   <div className="relative flex flex-col group">
-    <div className="border rounded-xl px-4 py-3 flex justify-between items-center bg-gray-50 h-full transition-all border-gray-300 group-hover:border-gray-400">
+    <div className="border rounded-xl px-4 py-3 flex justify-between items-center bg-gray-50 h-full border-gray-300">
       <div className="flex-1 flex items-center gap-3">
         <div className="flex-1">
           <p className="text-xs text-gray-500 font-medium">My City</p>
           <div className="flex items-center gap-2">
-            {!isDetecting ? (
-              <select 
-                className="w-full bg-transparent text-lg font-semibold text-gray-900 outline-none cursor-pointer appearance-none"
-                value={selectedCity}
-                onChange={(e) => setSelectedCity(e.target.value)}
-              >
-                <option value={selectedCity}>{selectedCity}</option>
-                {stats?.cities_covered?.names?.map((city: string) => (
-                  <option key={city} value={city}>{city}</option>
-                ))}
-              </select>
-            ) : (
-              <p className="text-lg font-semibold text-gray-400 animate-pulse italic">
-                Detecting...
-              </p>
-            )}
+            <select 
+              className={`w-full bg-transparent text-lg font-semibold text-gray-900 outline-none cursor-pointer appearance-none ${isDetecting ? 'opacity-50' : 'opacity-100'}`}
+              value={selectedCity}
+              onChange={(e) => handleCityChange(e.target.value)}
+            >
+              <option value={selectedCity}>{isDetecting ? 'Detecting...' : selectedCity}</option>
+              {stats?.cities_covered?.names?.map((city: string) => (
+                <option key={city} value={city}>{city}</option>
+              ))}
+            </select>
           </div>
         </div>
-
-        {/* Circular Progress Indicator */}
         {isDetecting && (
           <div className="w-5 h-5 border-2 border-gray-300 border-t-teal-500 rounded-full animate-spin"></div>
         )}
       </div>
-
-      <button 
-        onClick={() => setSelectedCity('Bengaluru')}
-        className="text-gray-400 hover:text-gray-700 text-xl ml-2 p-1"
-        title="Reset to Bengaluru"
-      >
-        ×
-      </button>
     </div>
 
-    {/* Location Error + Retry Link */}
     {locationError && !isDetecting && (
       <div className="absolute -bottom-6 left-1 flex items-center gap-2">
-        <p className="text-[10px] text-orange-600 font-medium">
-          ⚠️ Enable location for accuracy
-        </p>
-        <button 
-          onClick={detectLocation}
-          className="text-[10px] text-teal-600 font-bold underline hover:text-teal-700 transition"
-        >
-          Retry
+        <p className="text-[10px] text-orange-600 font-medium">⚠️ GPS Off</p>
+        <button onClick={() => detectLocation(true)} className="text-[10px] text-teal-600 font-bold underline">
+          Retry Detection
         </button>
       </div>
     )}
   </div>
 
-  {/* Search Button Container */}
-  <div className="relative">
-    <button
-      onClick={handleSearch}
-      disabled={isDetecting}
-      className={`flex items-center justify-center gap-2 text-white font-semibold rounded-xl w-full h-full py-4 md:py-0 px-8 transition shadow-lg 
-        ${isDetecting ? 'bg-gray-300 cursor-wait' : 'hover:opacity-90 active:scale-95'}`}
-      style={{ backgroundColor: isDetecting ? '#D1D5DB' : kAccent }}
-    >
-      {isDetecting ? (
-        <span className="flex items-center gap-2">
-          <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
-          Syncing...
-        </span>
-      ) : (
-        <>
-          <FaSearch size={16} />
-          Search
-        </>
-      )}
-    </button>
-    
-    {/* Mask Overlay */}
-    {isDetecting && (
-      <div className="absolute inset-0 bg-white/20 backdrop-blur-[2px] rounded-xl pointer-events-none border border-gray-200"></div>
-    )}
-  </div>
+  {/* Search Button (Unmasked) */}
+  <button
+    onClick={handleSearch}
+    className="flex items-center justify-center gap-2 text-white font-semibold rounded-xl w-full h-full py-4 md:py-0 px-8 transition shadow-lg bg-[#F67B0D] hover:opacity-90 active:scale-95"
+  >
+    <FaSearch size={16} />
+    Search in {selectedCity}
+  </button>
 </div>
 </div>
 
