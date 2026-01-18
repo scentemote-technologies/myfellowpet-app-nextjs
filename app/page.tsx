@@ -10,6 +10,7 @@ import {
   MdPets,
   MdLocalHospital,
 } from 'react-icons/md';
+import { FaArrowRight } from 'react-icons/fa';
 
 import { collection, getDocs, query, orderBy } from 'firebase/firestore';
 import { FaChevronLeft, FaChevronRight } from 'react-icons/fa';
@@ -19,7 +20,7 @@ import React, { useEffect, useState } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { Poppins } from 'next/font/google';
-import { doc, getDoc } from 'firebase/firestore';
+import { doc, getDoc, setDoc  } from 'firebase/firestore';
 import { db } from '../lib/firebase';
 
 // Icons
@@ -114,6 +115,36 @@ export default function LandingPage() {
   const [selectedCity, setSelectedCity] = useState('Bengaluru');
   const [isDetecting, setIsDetecting] = useState(true);
   const [locationError, setLocationError] = useState(false); // New state
+  const [partnerServices, setPartnerServices] = useState<any[]>([]);
+  
+
+useEffect(() => {
+  async function fetchPartnerServices() {
+    try {
+      const ref = doc(db, 'settings', 'partner_services');
+      const snap = await getDoc(ref);
+
+      if (!snap.exists()) return;
+
+      const data = snap.data();
+
+      // Convert map → array
+     const list = Object.keys(data)
+  .filter(key => data[key]?.display === true)
+  .map(key => ({
+    id: key,
+    ...data[key],
+  }))
+  .sort((a, b) => (a.order ?? 999) - (b.order ?? 999));
+
+      setPartnerServices(list);
+    } catch (e) {
+      console.error('Error fetching partner services', e);
+    }
+  }
+
+  fetchPartnerServices();
+}, []);
   // Define the detection logic as a standalone function
  const detectLocation = (force = false) => {
     // 1. Check for saved cookie unless 'force' (Retry) is clicked
@@ -242,6 +273,21 @@ const handleSearch = () => {
     router.push(`/services/${slug}?city=${selectedCity}`);
   };
 
+  const getSearchUrl = () => {
+  const serviceMap: Record<string, string> = {
+    'Boarding': 'boarding',
+    'Grooming': 'grooming',
+    'Shops': 'store',
+    'Training': 'training',
+    'Sitting': 'sitting',
+    'Veterinary': 'vet',
+  };
+
+  const slug = serviceMap[selectedService] || 'boarding';
+  return `/services/${slug}?city=${selectedCity}`;
+};
+
+
 
 
 const [activeBg, setActiveBg] = useState(0);
@@ -259,7 +305,7 @@ const [activeBg, setActiveBg] = useState(0);
   const hasMoreThanFive = sortedCards.length > 5;
   const cardsToDisplay =
     hasMoreThanFive && !showAllBoardingCards
-      ? sortedCards.slice(0, 6)
+      ? sortedCards.slice(0, 5)
       : sortedCards;
 
   // ---------------- FETCH FOOTER DATA ----------------
@@ -373,7 +419,7 @@ useEffect(() => {
 
 
 {/* ================= HERO ================= */}
-<main className="w-full py-24 px-4">
+<main className="w-full py-18 px-4">
   <div className="max-w-6xl mx-auto flex flex-col items-center">
 
    {/* ================= HEADING ================= */}
@@ -600,101 +646,144 @@ useEffect(() => {
 
 
   {/* Steps */}
-  <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-12">
+<div className="hidden md:flex items-center justify-center gap-4 mt-14">
 
-    {/* Step 1 */}
-    <div className="flex flex-col items-center text-center">
-      <Image
-        src="/assets/step1-login.png"
-        alt="Login with OTP"
-        width={180}
-        height={360}
-        className="rounded-2xl shadow-md mb-6"
-      />
-      <h3 className="font-semibold text-lg mb-2">Step 1</h3>
-      <p className="text-gray-600">
-        Open the <strong>MyFellowPet App</strong> and login instantly using{" "}
-        <strong>OTP</strong>
-      </p>
-    </div>
+  <StepItem
+    img="/assets/step1-login.png"
+    title="Login"
+    text="Quick OTP login"
+  />
 
-    {/* Step 2 */}
-    <div className="flex flex-col items-center text-center">
-      <Image
-        src="/assets/step2-browse.png"
-        alt="Browse services"
-        width={180}
-        height={360}
-        className="rounded-2xl shadow-md mb-6"
-      />
-      <h3 className="font-semibold text-lg mb-2">Step 2</h3>
-      <p className="text-gray-600">
-        <strong>Browse through all service providers</strong> available near you
-      </p>
-    </div>
+  <Arrow />
 
-    {/* Step 3 */}
-    <div className="flex flex-col items-center text-center">
-      <Image
-        src="/assets/step3-details.png"
-        alt="Read details"
-        width={180}
-        height={360}
-        className="rounded-2xl shadow-md mb-6"
-      />
-      <h3 className="font-semibold text-lg mb-2">Step 3</h3>
-      <p className="text-gray-600">
-        <strong>Read complete details, reviews, and pricing</strong> — no more{" "}
-        <strong>multiple calls</strong> or <strong>long enquiries</strong>
-      </p>
-    </div>
+  <StepItem
+    img="/assets/step2-browse.png"
+    title="Browse"
+    text="Find nearby services"
+  />
 
-    {/* Step 4 */}
-    <div className="flex flex-col items-center text-center">
-      <Image
-        src="/assets/step4-book.png"
-        alt="Book service"
-        width={180}
-        height={360}
-        className="rounded-2xl shadow-md mb-6"
-      />
-      <h3 className="font-semibold text-lg mb-2">Step 4</h3>
-      <p className="text-gray-600">
-        <strong>Select your pet</strong>, choose the <strong>date</strong> and
-        add <strong>extra services</strong> if needed — and{" "}
-        <strong>you’re done</strong>
-      </p>
-    </div>
+  <Arrow />
 
-  </div>
+  <StepItem
+    img="/assets/step3-details.png"
+    title="Compare"
+    text="Reviews & pricing"
+  />
+
+  <Arrow />
+
+  <StepItem
+    img="/assets/step4-book.png"
+    title="Book"
+    text="Select pet & confirm"
+  />
+
+</div>
+{/* MOBILE */}
+<div className="md:hidden grid grid-cols-1 sm:grid-cols-2 gap-10 mt-12">
+
+  <MobileStep
+    img="/assets/step1-login.png"
+    step="Step 1"
+    text="Login quickly using OTP"
+  />
+
+  <MobileStep
+    img="/assets/step2-browse.png"
+    step="Step 2"
+    text="Browse nearby pet services"
+  />
+
+  <MobileStep
+    img="/assets/step3-details.png"
+    step="Step 3"
+    text="Compare reviews & pricing"
+  />
+
+  <MobileStep
+    img="/assets/step4-book.png"
+    step="Step 4"
+    text="Select pet and confirm booking"
+  />
+
+</div>
+
+
 
 
 </section>
 
       {/* ================= BOARDING ================= */}
-      <section className="py-10 px-4 md:px-12">
-        <h2 className="text-4xl font-bold mt-10 mb-10">
-  Search nearby <span style={{ color: kPrimary }}>boarding centers</span>
-</h2>
+{/* ================= BOARDING ================= */}
+<section className="pt-24 pb-0 px-6 md:px-24 text-center">
+  
+  {/* Heading */}
+  <h2 className="text-4xl md:text-5xl font-semibold text-gray-900">
+    Search nearby <span style={{ color: kPrimary }}>boarding centers</span>
+  </h2>
+
+  {/* Description */}
+  <p className="mt-4 text-gray-600 text-lg max-w-xl mx-auto">
+    Discover trusted boarding homes near you, compare prices, reviews,
+    and book instantly.
+  </p>
 
 
         {loading && <p>Loading...</p>}
 
         {!loading && sortedCards.length > 0 && (
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            {cardsToDisplay.map((service) => (
-              <ServiceCard
-                key={service.service_id}
-                service={service}
-              />
-            ))}
-          </div>
+<div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-10">
+  {cardsToDisplay.map((service) => (
+    <ServiceCard
+      key={service.service_id}
+      service={service}
+    />
+  ))}
+
+  {sortedCards.length > 5 && (
+  <a
+    href={getSearchUrl()}
+    target="_blank"
+    className="group border rounded-2xl overflow-hidden
+               hover:shadow-lg hover:-translate-y-1
+               transition flex flex-col justify-between
+               h-full"
+    style={{ borderColor: kPrimary }}
+  >
+    {/* Top section – SAME height as logo area */}
+<div className="h-[72px] flex items-center justify-center">
+      <span
+        className="text-4xl font-bold"
+        style={{ color: kPrimary }}
+      >
+        +
+      </span>
+    </div>
+
+    {/* Middle content – same padding density */}
+    <div className="px-3 text-center">
+      <p className="text-lg font-semibold text-gray-900">
+        Show More
+      </p>
+      <p className="text-sm text-gray-500 mt-1">
+        View all services
+      </p>
+    </div>
+
+    {/* Bottom spacer – SAME height as ServiceCard footer */}
+    <div className="h-[28px]" />
+  </a>
+)}
+
+
+</div>
+
         )}
       </section>
 
 <section
   id="partner-section"
-  className="py-28 px-4 md:px-12 bg-white text-center"
+  className="py-24 px-4 md:px-12 bg-white text-center"
 >
 
   {/* Heading */}
@@ -706,86 +795,46 @@ useEffect(() => {
     Join our network of trusted pet service providers and grow your business.
   </p>
 
-  {/* Options */}
-  {/* Options */}
-<div className="mt-14 grid grid-cols-1 md:grid-cols-3 gap-12 max-w-5xl mx-auto">
+<div className="mt-12 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 max-w-5xl mx-auto">
+  {partnerServices.map(service => (
+    <a
+      key={service.id}
+      href={service.onboarding_link || 'https://partner.myfellowpet.com/'}
+      target="_blank"
+      className="group border rounded-xl overflow-hidden transition
+                 hover:shadow-xl hover:-translate-y-1"
+      style={{ borderColor: kPrimary }}
+    >
+      {/* Image – square */}
+<div className="relative w-full aspect-square max-h-[240px] bg-white mx-auto">
+        <Image
+          src={service.image_url}
+          alt={service.service_name}
+          fill
+          className="object-contain "
+        />
+      </div>
 
-  {/* Self Onboarding */}
-  <a
-    href="https://partner.myfellowpet.com/"
-    target="_blank"
-    className="group border rounded-2xl p-8 text-left transition hover:shadow-lg"
-    style={{ borderColor: kPrimary }}
-  >
-  
+      {/* Content – compact */}
+      <div className="px-5 py-4 text-left flex flex-col gap-2">
+        <h3 className="text-lg font-semibold text-gray-900 leading-tight">
+          {service.service_name}
+        </h3>
 
-    <h3 className="text-xl font-semibold text-gray-900 mb-2">
-      Self onboarding
-    </h3>
+        <p className="text-gray-600 text-sm leading-snug line-clamp-3">
+          {service.description}
+        </p>
 
-    <p className="text-gray-600">
-      Complete your enrollment on your own and get started in just a few minutes.
-    </p>
-
-    <p className="mt-4 text-sm font-semibold" style={{ color: kPrimary }}>
-      Start onboarding →
-    </p>
-  </a>
-
-  {/* Need Help */}
-  <a
-    href={
-      footerData?.whatsapp
-        ? `https://wa.me/${footerData.whatsapp.replace(
-            /[^0-9]/g,
-            ''
-          )}?text=${encodeURIComponent(
-            footerData.whatsapp_message ||
-              'I need help with partner onboarding'
-          )}`
-        : '#'
-    }
-    target="_blank"
-    className="group border rounded-2xl p-8 text-left transition hover:shadow-lg"
-    style={{ borderColor: kPrimary }}
-  >
- 
-
-    <h3 className="text-xl font-semibold text-gray-900 mb-2">
-      I need help
-    </h3>
-
-    <p className="text-gray-600">
-      Talk to our onboarding team and we’ll guide you through every step.
-    </p>
-
-    <p className="mt-4 text-sm font-semibold" style={{ color: kPrimary }}>
-      Contact us →
-    </p>
-  </a>
-
-  {/* Learn More */}
-  <a
-    href="https://www.myfellowpet.com/home-boarder-onboarding/overview"
-    target="_blank"
-    className="group border rounded-2xl p-8 text-left transition hover:shadow-lg"
-    style={{ borderColor: kPrimary }}
-  >
-  
-
-    <h3 className="text-xl font-semibold text-gray-900 mb-2">
-      Learn before you begin
-    </h3>
-
-    <p className="text-gray-600">
-      Explore how the MyFellowPet partner platform works before getting started.
-    </p>
-
-    <p className="mt-4 text-sm font-semibold" style={{ color: kPrimary }}>
-      View overview →
-    </p>
-  </a>
-
+        <span
+          className="mt-2 text-sm font-semibold inline-flex items-center gap-1"
+          style={{ color: kPrimary }}
+        >
+          Start onboarding
+          <span className="transition group-hover:translate-x-1">→</span>
+        </span>
+      </div>
+    </a>
+  ))}
 </div>
 
 
@@ -797,7 +846,7 @@ useEffect(() => {
 
 {/* ================= BLOGS SECTION ================= */}
 {blogs.length > 0 && (
-  <section className="py-16 px-4 md:px-12 bg-white">
+  <section className="pt-0 pb-10 px-4 md:px-12 bg-white">
     <div className="max-w-6xl mx-auto">
 
       {/* Header */}
@@ -942,6 +991,76 @@ function StatItem({
           </ul>
         </div>
       )}
+    </div>
+  );
+}
+function StepItem({
+  img,
+  title,
+  text,
+}: {
+  img: string;
+  title: string;
+  text: string;
+}) {
+  return (
+<div className="flex flex-col items-center text-center w-[200px]">
+     <Image
+  src={img}
+  alt={title}
+  width={170}
+  height={340}
+/>
+
+      <h4 className="text-base font-semibold text-gray-900">
+        {title}
+      </h4>
+      <p className="text-sm text-gray-600 mt-1">
+        {text}
+      </p>
+    </div>
+  );
+}
+
+function Arrow() {
+  return (
+    <div className="flex items-center justify-center">
+      <span
+        className="text-4xl font-bold mx-2"
+        style={{ color: kPrimary }}
+      >
+        →
+      </span>
+    </div>
+  );
+}
+
+
+
+function MobileStep({
+  img,
+  step,
+  text,
+}: {
+  img: string;
+  step: string;
+  text: string;
+}) {
+  return (
+    <div className="flex flex-col items-center text-center">
+      <Image
+        src={img}
+        alt={step}
+        width={180}
+        height={360}
+        className="rounded-2xl shadow-md mb-4"
+      />
+      <h3 className="text-lg font-semibold text-gray-900">
+        {step}
+      </h3>
+      <p className="text-sm text-gray-600 mt-1">
+        {text}
+      </p>
     </div>
   );
 }
